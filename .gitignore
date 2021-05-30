@@ -45,4 +45,6 @@ bin/
 *.code-workspace
 
 #Visual Studio
-.vs
+.vs/
+*.vcxpro*
+*.sln

@@ -6,8 +6,8 @@ else
 endif
 
 CC=g++
-CINCLUDE=-I$(CURDIR)/include
-CLIB=-L$(CURDIR)/lib
+CINCLUDE=-I$(CURDIR)/src/include
+CLIB=-L$(CURDIR)/src/lib
 CFLAGS= $(CINCLUDE) $(CLIB) $(CLIBS) -Wall
 
 learnopengl: main.cpp glad.c
