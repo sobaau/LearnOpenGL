@@ -33,3 +33,16 @@
 
 #apple
 .DS_Store
+
+#windows
+Thumbs.db
+
+# Run time
+bin/
+
+#vscode
+.vscode/
+*.code-workspace
+
+#Visual Studio
+.vs
