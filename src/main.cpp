@@ -5,6 +5,10 @@
 #include "shader.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 
