@@ -24,7 +24,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-#ifdef __APPLE__
+#ifdef _APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
@@ -82,7 +82,11 @@ int main()
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
     std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
 
+#ifdef _APPLE__
     Shader ourShader("/Users/soba/dev/code/LearnOpenGL/src/shaders/shader.vs","/Users/soba/dev/code/LearnOpenGL/src/shaders/shader.fs");
+#elif _WIN32
+    Shader ourShader("shaders\\shader.vs","shaders\\shader.fs");
+#endif
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
