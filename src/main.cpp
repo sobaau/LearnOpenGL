@@ -154,8 +154,14 @@ int main()
 #elif _WIN32
    Shader lightCubeShader ("shaders\\shader.vert", "shaders\\lightshader.frag");
 #endif
+#ifdef __APPLE__
+
     unsigned int diffuseMap = loadTexture(std::filesystem::path("/Users/soba/dev/code/LearnOpenGL/src/textures/container2.png").c_str());
     unsigned int specularMap = loadTexture(std::filesystem::path("/Users/soba/dev/code/LearnOpenGL/src/textures/container2_specular.png").c_str());
+#elif _WIN32
+    unsigned int diffuseMap = loadTexture("textures/container2.png");
+    unsigned int specularMap = loadTexture("textures/container2_specular.png");
+#endif
     
     CubeShader.use();
     CubeShader.setInt("material.diffuse", 0);
@@ -176,8 +182,8 @@ int main()
         // ------
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
-        lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
+        //lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
+        //lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
         // be sure to activate shader when setting uniforms/drawing objects
         CubeShader.use();
         CubeShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
