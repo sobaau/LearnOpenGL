@@ -39,7 +39,7 @@ Thumbs.db
 
 # Run time
 bin/
-
+lib/
 #vscode
 .vscode/
 *.code-workspace
@@ -48,3 +48,16 @@ bin/
 .vs/
 *.vcxpro*
 *.sln
+**.idea/
+**/cmake-build-debug
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/install_manifest.txt
+**/CMakeFiles/
+**/CTestTestfile.cmake
+**/Makefile
+**/makefile
+**/*.cbp
+**/CMakeScripts
+**/compile_commands.json
+*.pc
