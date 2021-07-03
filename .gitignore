@@ -48,7 +48,7 @@ lib/
 .vs/
 *.vcxpro*
 *.sln
-**.idea/
+**/.idea/
 **/cmake-build-debug
 **/CMakeCache.txt
 **/cmake_install.cmake
@@ -61,3 +61,6 @@ lib/
 **/CMakeScripts
 **/compile_commands.json
 *.pc
+**/Testing/
+**/_build/
+**/build/
