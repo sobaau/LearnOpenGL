@@ -65,3 +65,4 @@ lib/
 **/_build/
 **/build/
 **/Testing/
+dependencies/assimp/revision.h
