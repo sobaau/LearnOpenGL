@@ -20,8 +20,10 @@ set(INJECT_DEBUG_POSTFIX OFF CACHE BOOL "" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/glfw)
 add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/assimp)
 add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/imgui)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/glm)
+add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/glad)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src)
+
 
 set(CMAKE_CXX_FLAGS "-fvisibility=hidden")
 

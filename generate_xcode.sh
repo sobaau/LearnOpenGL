@@ -1,0 +1,1 @@
+cmake -G Xcode -H. -B_build
