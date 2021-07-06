@@ -1,25 +1,10 @@
-
-#include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <stb_image.h>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
-#include "mesh.h"
-#include "shader.h"
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <map>
-#include <vector>
 #include "model.h"
+#include <stb_image.h>
+
 using namespace std;
 
 // constructor, expects a filepath to a 3D model.
-Model::Model(string const &path) : gammaCorrection(gamma)
+Model::Model(string const &path) : gamma(false) , gammaCorrection(gamma)
 {
     loadModel(path);
 }
@@ -197,7 +182,7 @@ unsigned int TextureFromFile(const char *path, const string &directory, bool gam
     unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
     if (data)
     {
-        GLenum format;
+        GLenum format = 0;
         if (nrComponents == 1)
             format = GL_RED;
         else if (nrComponents == 3)

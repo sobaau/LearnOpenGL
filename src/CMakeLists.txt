@@ -1,8 +1,8 @@
 find_library(COCOA_LIBRARY Cocoa REQUIRED CMAKE_FIND_FRAMEWORK)
 find_library(IOKIT_LIBRARY IOKit REQUIRED CMAKE_FIND_FRAMEWORK)
 find_library(OPENGL_LIBRARY OpenGL REQUIRED)
-set(sources main.cpp mesh.cpp model.cpp shader.cpp)
-set(headers mesh.h model.h shader.h)
+set(sources main.cpp mesh.cpp model.cpp shader.cpp img_demo.cpp cube_demo.cpp)
+set(headers mesh.h model.h shader.h img_demo.h cube_demo.h)
 add_executable(opengl ${sources} ${headers})
 target_include_directories(opengl PUBLIC 
 ${CMAKE_CURRENT_SOURCE_DIR}/include

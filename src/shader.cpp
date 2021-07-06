@@ -1,10 +1,8 @@
-#include "shader.h"
 #include <glad/glad.h> // include glad to get all the required OpenGL headers
-#include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <glm/glm.hpp>
+#include "shader.h"
 
 Shader::Shader(const char *vertexPath, const char *fragmentPath)
 {

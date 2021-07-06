@@ -16,14 +16,19 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(INJECT_DEBUG_POSTFIX OFF CACHE BOOL "" FORCE)
-
 add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/glfw)
 add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/assimp)
 add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/imgui)
 add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/glm)
 add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/glad)
+if (MSVC)
+    # warning level 4 and all warnings as errors
+    add_compile_options(/W4 /WX)
+else()
+    # lots of warnings and all warnings as errors
+    add_compile_options(-Wall)
+endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
-
 
 set(CMAKE_CXX_FLAGS "-fvisibility=hidden")
 
