@@ -10,7 +10,6 @@ class imgDemo{
     // Setup Platform/Renderer backends
     bool show_demo_window;
     bool show_another_window;
-    GLFWwindow* window;
     ImVec4 clear_color;
 public:
     imgDemo(GLFWwindow* window);
