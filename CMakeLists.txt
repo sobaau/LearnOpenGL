@@ -23,7 +23,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/glm)
 add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/glad)
 if (MSVC)
     # warning level 4 and all warnings as errors
-    add_compile_options(/W4 /WX)
+    add_compile_options(/W4 /EHsc)
 else()
     # lots of warnings and all warnings as errors
     add_compile_options(-Wall)
@@ -31,6 +31,5 @@ endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 
 set(CMAKE_CXX_FLAGS "-fvisibility=hidden")
-
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa
 #-framework OpenGL -framework IOKit")

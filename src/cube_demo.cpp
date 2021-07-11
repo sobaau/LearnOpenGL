@@ -11,10 +11,10 @@ cubeDemo::cubeDemo() :
     diffuseMap(loadTexture("/Users/soba/dev/code/LearnOpenGL/src/textures/blending_transparent_window.png")),
     specularMap(loadTexture("/Users/soba/dev/code/LearnOpenGL/src/textures/container2_specular.png"))
 #elif _WIN32
-    lightCubeShader("shaders\\shader.vert", "shaders\\light_cube..frag"),
+    lightCubeShader("shaders\\shader.vert", "shaders\\light_cube.frag"),
     lightingShader("shaders\\shader.vert", "shaders\\light.frag"),
     diffuseMap(loadTexture("textures/container2.png")),
-    specularMap(loadTexture("textures/container2_specular.png")),
+    specularMap(loadTexture("textures/container2_specular.png"))
 #endif
 {
     glGenVertexArrays(1, &cubeVAO);

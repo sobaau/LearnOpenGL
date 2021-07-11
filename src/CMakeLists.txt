@@ -1,10 +1,22 @@
-find_library(COCOA_LIBRARY Cocoa REQUIRED CMAKE_FIND_FRAMEWORK)
-find_library(IOKIT_LIBRARY IOKit REQUIRED CMAKE_FIND_FRAMEWORK)
-find_library(OPENGL_LIBRARY OpenGL REQUIRED)
-set(sources main.cpp mesh.cpp model.cpp shader.cpp img_demo.cpp cube_demo.cpp grass.cpp texture_loader.cpp)
-set(headers mesh.h model.h shader.h img_demo.h cube_demo.h grass.h texture_loader.h) 
-add_executable(opengl ${sources} ${headers})
-target_include_directories(opengl PUBLIC 
+IF(APPLE)
+    find_library(COCOA_LIBRARY Cocoa REQUIRED CMAKE_FIND_FRAMEWORK)
+    find_library(IOKIT_LIBRARY IOKit REQUIRED CMAKE_FIND_FRAMEWORK)
+    find_library(OPENGL_LIBRARY OpenGL REQUIRED)
+ENDIF()
+IF(WIN32)
+    find_package(OpenGL REQUIRED)
+ENDIF()
+# Add source files
+file(GLOB_RECURSE SOURCE_FILES 
+	${CMAKE_SOURCE_DIR}/src/*.c
+	${CMAKE_SOURCE_DIR}/src/*.cpp)	
+# Add header files
+file(GLOB_RECURSE HEADER_FILES 
+	${CMAKE_SOURCE_DIR}/src/*.h
+	${CMAKE_SOURCE_DIR}/src/*.hpp)
+
+add_executable(LearnOpenGL ${SOURCE_FILES} ${HEADER_FILES})
+target_include_directories(LearnOpenGL PUBLIC 
 ${CMAKE_CURRENT_SOURCE_DIR}/include
 ${CMAKE_SOURCE_DIR}/dependencies/glfw/include
 ${CMAKE_SOURCE_DIR}/dependencies/assimp/include
@@ -14,7 +26,21 @@ ${CMAKE_SOURCE_DIR}/dependencies/stb_image
 ${CMAKE_SOURCE_DIR}/dependencies/glm
 ${CMAKE_SOURCE_DIR}/dependencies/glad/include
 )
-target_link_libraries(opengl PUBLIC "${OPENGL_LIBRARY}" "${IOKIT_LIBRARY}" "${COCOA_LIBRARY}")
-target_link_libraries(opengl PUBLIC glfw assimp imgui glm glad)
-target_compile_features(opengl PUBLIC cxx_std_17)
+IF(APPLE)
+    target_link_libraries(LearnOpenGL PUBLIC "${OPENGL_LIBRARY}" "${IOKIT_LIBRARY}" "${COCOA_LIBRARY}")
+ENDIF()
+IF(WIN32)
+    target_link_libraries(LearnOpenGL PUBLIC OpenGL::GL User32.lib Gdi32.lib Shell32.lib kernel32.lib)
+ENDIF()
+target_link_libraries(LearnOpenGL PUBLIC glfw assimp imgui glm glad)
+target_compile_features(LearnOpenGL PUBLIC cxx_std_17)
 set(CMAKE_CXX_FLAGS "-fvisibility=hidden")
+# add_custom_command(
+#         TARGET LearnOpenGL POST_BUILD
+#         COMMAND ${CMAKE_COMMAND} -E copy
+#                 ${CMAKE_SOURCE_DIR}/src/shaders/*
+#                 ${CMAKE_CURRENT_BINARY_DIR}/shaders)
+if (CMAKE_BUILD_TYPE EQUAL "Debug")
+    message("debug mode")
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders DESTINATION ${CMAKE_BINARY_DIR}/bin/Debug/shaders)
+ENDIF()
