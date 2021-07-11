@@ -81,5 +81,5 @@ public:
     unsigned int specularMap;
     cubeDemo();
     ~cubeDemo();
-    void draw(Camera &camera, int SCR_WIDTH, int SCR_HEIGHT);
+    void Draw(Camera &camera, int SCR_WIDTH, int SCR_HEIGHT);
 };

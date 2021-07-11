@@ -11,6 +11,7 @@
 #include "camera.h"
 #include "img_demo.h"
 #include "model.h"
+#include "grass.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -23,12 +24,13 @@ const unsigned int SCR_HEIGHT = 720;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-float lastX = SCR_WIDTH / 2.0f;
-float lastY = SCR_HEIGHT / 2.0f;
-bool firstMouse = true;
+auto lastX = SCR_WIDTH / 2.0f;
+auto lastY = SCR_HEIGHT / 2.0f;
+auto firstMouse = true;
 // timing
-float deltaTime = 0.0f;	// time between current frame and last frame
-float lastFrame = 0.0f;
+auto deltaTime = 0.0f;	// time between current frame and last frame
+auto lastFrame = 0.0f;
+
 int main()
 {
     // glfw: initialize and configure
@@ -70,13 +72,12 @@ int main()
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
-glDepthFunc(GL_LESS); 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    stbi_set_flip_vertically_on_load(true);
+    //stbi_set_flip_vertically_on_load(true);
 
     Shader ourShader("/Users/soba/dev/code/LearnOpenGL/src/shaders/shader.vert", "/Users/soba/dev/code/LearnOpenGL/src/shaders/light.frag");
-    imgDemo demoWindow(window);
+    //imgDemo demoWindow(window);
     cubeDemo cubes{};
     Model ourModel("/Users/soba/dev/code/LearnOpenGL/src/sponza/sponza.obj");
     glm::vec3 pointLightPositions[4] = {
@@ -85,8 +86,14 @@ glDepthFunc(GL_LESS);
         glm::vec3(-4.0f,  2.0f, -12.0f),
         glm::vec3( 0.0f,  0.0f, -3.0f)
     };
-    glEnable(GL_STENCIL_TEST);    
-
+    
+    std::vector<Grass> grass;
+    grass.push_back(Grass(glm::vec3(-1.5f, 0.0f, -0.48f)));
+    grass.push_back(Grass(glm::vec3(1.5f, 0.0f, 0.51f)));
+    grass.push_back(Grass(glm::vec3(0.0f, 0.0f, 0.7f)));
+    grass.push_back(Grass(glm::vec3(-0.3f, 0.0f, -2.3f)));
+    grass.push_back(Grass(glm::vec3(0.5f, 0.0f, -0.6f)));
+    
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
@@ -102,33 +109,35 @@ glDepthFunc(GL_LESS);
         // render
         // ------
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        cubes.draw(camera, SCR_WIDTH, SCR_HEIGHT);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        auto view = camera.GetViewMatrix();
+        cubes.Draw(camera, SCR_WIDTH, SCR_HEIGHT);
         ourShader.use();
         renderLights(ourShader, pointLightPositions);
         // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        glm::mat4 view = camera.GetViewMatrix();
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
         // render the loaded model
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f)); // translate it down so it's at the center of the scene
+        auto model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));	// it's a bit too big for our scene, so scale it down
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
+        for (auto g : grass){
+            g.Draw(projection, view);
+        }
          //demoWindow.draw();
         glfwSwapBuffers(window);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); 
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
     }
-
-
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
     glfwTerminate();
     return 0;
 }
+
 void renderLights(Shader &ourShader, glm::vec3 *pointLightPositions){
         ourShader.setInt("material.diffuse", 0);
         ourShader.setInt("material.specular", 1);
