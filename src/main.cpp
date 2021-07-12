@@ -74,11 +74,15 @@ int main()
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     //stbi_set_flip_vertically_on_load(true);
-
-    Shader ourShader("/Users/soba/dev/code/LearnOpenGL/src/shaders/shader.vert", "/Users/soba/dev/code/LearnOpenGL/src/shaders/light.frag");
-    //imgDemo demoWindow(window);
-    cubeDemo cubes{};
-    Model ourModel("/Users/soba/dev/code/LearnOpenGL/src/sponza/sponza.obj");
+    #ifdef __APPLE__
+        Shader ourShader("/Users/soba/dev/code/LearnOpenGL/src/shaders/shader.vert", "/Users/soba/dev/code/LearnOpenGL/src/shaders/light.frag");
+        Model ourModel("/Users/soba/dev/code/LearnOpenGL/src/sponza/sponza.obj");
+    #elif _WIN32
+        Shader ourShader("shaders/shader.vert", "shaders/light.frag");
+        Model ourModel("sponza/sponza.obj");
+    #endif
+    imgDemo demoWindow(window);
+    cubeDemo cubes;
     glm::vec3 pointLightPositions[4] = {
         glm::vec3( 0.7f,  0.2f,  2.0f),
         glm::vec3( 2.3f, -3.3f, -4.0f),
@@ -122,10 +126,11 @@ int main()
         model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));	// it's a bit too big for our scene, so scale it down
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
+        
         for (auto g : grass){
             g.Draw(projection, view);
         }
-         //demoWindow.draw();
+        demoWindow.draw();
         glfwSwapBuffers(window);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
@@ -158,32 +163,32 @@ void renderLights(Shader &ourShader, glm::vec3 *pointLightPositions){
         ourShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
         ourShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
         ourShader.setFloat("pointLights[0].constant", 1.0f);
-        ourShader.setFloat("pointLights[0].linear", 0.09);
-        ourShader.setFloat("pointLights[0].quadratic", 0.032);
+        ourShader.setFloat("pointLights[0].linear", 0.09f);
+        ourShader.setFloat("pointLights[0].quadratic", 0.032f);
         // point light 2
         ourShader.setVec3("pointLights[1].position", pointLightPositions[1]);
         ourShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
         ourShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
         ourShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
         ourShader.setFloat("pointLights[1].constant", 1.0f);
-        ourShader.setFloat("pointLights[1].linear", 0.09);
-        ourShader.setFloat("pointLights[1].quadratic", 0.032);
+        ourShader.setFloat("pointLights[1].linear", 0.09f);
+        ourShader.setFloat("pointLights[1].quadratic", 0.032f);
         // point light 3
         ourShader.setVec3("pointLights[2].position", pointLightPositions[2]);
         ourShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
         ourShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
         ourShader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
         ourShader.setFloat("pointLights[2].constant", 1.0f);
-        ourShader.setFloat("pointLights[2].linear", 0.09);
-        ourShader.setFloat("pointLights[2].quadratic", 0.032);
+        ourShader.setFloat("pointLights[2].linear", 0.09f);
+        ourShader.setFloat("pointLights[2].quadratic", 0.032f);
         // point light 4
         ourShader.setVec3("pointLights[3].position", pointLightPositions[3]);
         ourShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
         ourShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
         ourShader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
         ourShader.setFloat("pointLights[3].constant", 1.0f);
-        ourShader.setFloat("pointLights[3].linear", 0.09);
-        ourShader.setFloat("pointLights[3].quadratic", 0.032);
+        ourShader.setFloat("pointLights[3].linear", 0.09f);
+        ourShader.setFloat("pointLights[3].quadratic", 0.032f);
         // spotLight
         ourShader.setVec3("spotLight.position", camera.Position);
         ourShader.setVec3("spotLight.direction", camera.Front);
@@ -191,8 +196,8 @@ void renderLights(Shader &ourShader, glm::vec3 *pointLightPositions){
         ourShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
         ourShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
         ourShader.setFloat("spotLight.constant", 1.0f);
-        ourShader.setFloat("spotLight.linear", 0.09);
-        ourShader.setFloat("spotLight.quadratic", 0.032);
+        ourShader.setFloat("spotLight.linear", 0.09f);
+        ourShader.setFloat("spotLight.quadratic", 0.032f);
         ourShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
         ourShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f))); 
 }
