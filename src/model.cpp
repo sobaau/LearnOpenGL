@@ -1,5 +1,5 @@
-#include "model.h"
 #include <stb_image.h>
+#include "model.h"
 
 using namespace std;
 

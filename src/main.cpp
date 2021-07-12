@@ -82,7 +82,6 @@ int main()
         Model ourModel("sponza/sponza.obj");
     #endif
     imgDemo demoWindow(window);
-    cubeDemo cubes;
     glm::vec3 pointLightPositions[4] = {
         glm::vec3( 0.7f,  0.2f,  2.0f),
         glm::vec3( 2.3f, -3.3f, -4.0f),
@@ -90,16 +89,18 @@ int main()
         glm::vec3( 0.0f,  0.0f, -3.0f)
     };
     
-    std::vector<Grass> grass;
-    grass.push_back(Grass(glm::vec3(-1.5f, 0.0f, -0.48f)));
-    grass.push_back(Grass(glm::vec3(1.5f, 0.0f, 0.51f)));
-    grass.push_back(Grass(glm::vec3(0.0f, 0.0f, 0.7f)));
-    grass.push_back(Grass(glm::vec3(-0.3f, 0.0f, -2.3f)));
-    grass.push_back(Grass(glm::vec3(0.5f, 0.0f, -0.6f)));
-    
+    std::vector<glm::vec3> grassLocations = {
+        glm::vec3(-1.5f, 0.0f, -0.48f),
+        glm::vec3(1.5f, 0.0f, 0.51f),
+        glm::vec3(0.0f, 0.0f, 0.7f),
+        glm::vec3(-0.3f, 0.0f, -2.3f),
+        glm::vec3(0.5f, 0.0f, -0.6f)
+    };
+    Grass grass(grassLocations);
+    cubeDemo cubes;
+    //Grass g = Grass(glm::vec3(-1.5f, 0.0f, -0.48f));
     while (!glfwWindowShouldClose(window))
     {
-        glfwPollEvents();
         // per-frame time logic
         // --------------------
         float currentFrame = glfwGetTime();
@@ -126,18 +127,17 @@ int main()
         model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));	// it's a bit too big for our scene, so scale it down
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
-        
-        for (auto g : grass){
-            g.Draw(projection, view);
-        }
+        grass.Draw(projection, view);
         demoWindow.draw();
         glfwSwapBuffers(window);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+        glfwPollEvents();
 
     }
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
+    grass.cleanUp();
     glfwTerminate();
     return 0;
 }
