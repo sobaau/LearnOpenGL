@@ -7,9 +7,7 @@ project(LearnOpenGL VERSION 1.0
         DESCRIPTION "https://learnopengl.com/"
         LANGUAGES CXX C)
 
-#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -30,6 +28,6 @@ else()
 endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 
-set(CMAKE_CXX_FLAGS "-fvisibility=hidden")
+#set(CMAKE_CXX_FLAGS "-fvisibility=hidden")
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa
 #-framework OpenGL -framework IOKit")

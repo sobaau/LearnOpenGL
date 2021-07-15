@@ -1,3 +1,7 @@
+cmake_minimum_required(VERSION 3.7...3.20)
+if(${CMAKE_VERSION} VERSION_LESS 3.12)
+    cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
+endif()
 IF(APPLE)
     find_library(COCOA_LIBRARY Cocoa REQUIRED CMAKE_FIND_FRAMEWORK)
     find_library(IOKIT_LIBRARY IOKit REQUIRED CMAKE_FIND_FRAMEWORK)
@@ -14,6 +18,10 @@ file(GLOB_RECURSE SOURCE_FILES
 file(GLOB_RECURSE HEADER_FILES 
 	${CMAKE_SOURCE_DIR}/src/*.h
 	${CMAKE_SOURCE_DIR}/src/*.hpp)
+
+# set(CMAKE_CXX_CLANG_TIDY
+#     clang-tidy;
+#     -checks=*;)
 
 add_executable(LearnOpenGL ${SOURCE_FILES} ${HEADER_FILES})
 target_include_directories(LearnOpenGL PUBLIC 
@@ -40,6 +48,7 @@ set(CMAKE_CXX_FLAGS "-fvisibility=hidden")
 #         COMMAND ${CMAKE_COMMAND} -E copy
 #                 ${CMAKE_SOURCE_DIR}/src/shaders/*
 #                 ${CMAKE_CURRENT_BINARY_DIR}/shaders)
+
 if (CMAKE_BUILD_TYPE EQUAL "Debug")
     message("debug mode")
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders DESTINATION ${CMAKE_BINARY_DIR}/bin/Debug/shaders)

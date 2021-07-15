@@ -7,19 +7,19 @@ cubeDemo::cubeDemo() :
 #ifdef __APPLE__
     lightCubeShader("/Users/soba/dev/code/LearnOpenGL/src/shaders/shader.vert", "/Users/soba/dev/code/LearnOpenGL/src/shaders/light_cube.frag"),
     lightingShader("/Users/soba/dev/code/LearnOpenGL/src/shaders/shader.vert", "/Users/soba/dev/code/LearnOpenGL/src/shaders/light.frag"),
-    diffuseMap(loadTexture("/Users/soba/dev/code/LearnOpenGL/src/textures/blending_transparent_window.png")),
+    diffuseMap(loadTexture("/Users/soba/dev/code/LearnOpenGL/src/textures/container2.png")),
     specularMap(loadTexture("/Users/soba/dev/code/LearnOpenGL/src/textures/container2_specular.png"))
 #elif _WIN32
     lightCubeShader("shaders/shader.vert", "shaders/light_cube.frag"),
     lightingShader("shaders/shader.vert", "shaders/light.frag"),
-    diffuseMap(loadTexture("textures/blending_transparent_window.png")),
+    diffuseMap(loadTexture("textures/container2.png")),
     specularMap(loadTexture("textures/container2_specular.png"))
 #endif
 {
     glGenVertexArrays(1, &cubeVAO);
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
     glBindVertexArray(cubeVAO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
@@ -111,7 +111,7 @@ void cubeDemo::Draw(Camera &camera, int SCR_WIDTH, int SCR_HEIGHT)
     lightingShader.setMat4("view", view);
 
     // world transformation
-    glm::mat4 model = glm::mat4(1.0f);
+    auto model = glm::mat4(1.0f);
     lightingShader.setMat4("model", model);
 
     // bind diffuse map
@@ -123,13 +123,26 @@ void cubeDemo::Draw(Camera &camera, int SCR_WIDTH, int SCR_HEIGHT)
 
     // render containers
     glBindVertexArray(cubeVAO);
-    for (unsigned int i = 0; i < 10; i++)
+    //    std::map<float, glm::vec3> sorted;
+    //     for (unsigned int i = 0; i < sizeof(cubePositions)/sizeof(cubePositions[0]); i++)
+    //     {
+    //         float distance = glm::length(camera.Position - cubePositions[i]);
+    //         sorted[distance] = cubePositions[i];
+    //     }
+    //    for (std::map<float, glm::vec3>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it)
+    //     {
+    //         model = glm::mat4(1.0f);
+    //         model = glm::translate(model, it->second);
+    //         float angle = 20.0f * it->first;
+    //         model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+    //         lightingShader.setMat4("model", model);
+    //         glDrawArrays(GL_TRIANGLES, 0, 36);
+    //     }
+    for (auto pos : cubePositions)
     {
         // calculate the model matrix for each object and pass it to shader before drawing
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, cubePositions[i]);
-        float angle = 20.0f * i;
-        model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, pos);
         lightingShader.setMat4("model", model);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -143,10 +156,10 @@ void cubeDemo::Draw(Camera &camera, int SCR_WIDTH, int SCR_HEIGHT)
 
     // we now draw as many light bulbs as we have point lights.
     glBindVertexArray(lightCubeVAO);
-    for (unsigned int i = 0; i < 4; i++)
+    for (auto pos : pointLightPositions)
     {
         model = glm::mat4(1.0f);
-        model = glm::translate(model, pointLightPositions[i]);
+        model = glm::translate(model, pos);
         model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
         lightCubeShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -154,7 +167,7 @@ void cubeDemo::Draw(Camera &camera, int SCR_WIDTH, int SCR_HEIGHT)
     glBindVertexArray(0);
 
 }
-cubeDemo::~cubeDemo()
+void cubeDemo::cleanUp()
 {
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
