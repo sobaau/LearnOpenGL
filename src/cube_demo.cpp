@@ -1,7 +1,5 @@
-#include <glad/glad.h>
+#include <vector>
 #include "cube_demo.h"
-#include "camera.h"
-#include "texture_loader.h"
 
 cubeDemo::cubeDemo() :
 #ifdef __APPLE__
@@ -42,7 +40,7 @@ cubeDemo::cubeDemo() :
     lightingShader.setInt("material.specular", 1);
 }
 
-void cubeDemo::Draw(Camera &camera, int SCR_WIDTH, int SCR_HEIGHT)
+void cubeDemo::Draw(Camera &camera, int SCR_WIDTH, int SCR_HEIGHT,glm::mat4 projection, glm::mat4 view, glm::vec3 *pointLightPositions)
 {
 
     // be sure to activate shader when setting uniforms/drawing objects
@@ -105,8 +103,6 @@ void cubeDemo::Draw(Camera &camera, int SCR_WIDTH, int SCR_HEIGHT)
     lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
     // view/projection transformations
-    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-    glm::mat4 view = camera.GetViewMatrix();
     lightingShader.setMat4("projection", projection);
     lightingShader.setMat4("view", view);
 
@@ -123,28 +119,13 @@ void cubeDemo::Draw(Camera &camera, int SCR_WIDTH, int SCR_HEIGHT)
 
     // render containers
     glBindVertexArray(cubeVAO);
-    //    std::map<float, glm::vec3> sorted;
-    //     for (unsigned int i = 0; i < sizeof(cubePositions)/sizeof(cubePositions[0]); i++)
-    //     {
-    //         float distance = glm::length(camera.Position - cubePositions[i]);
-    //         sorted[distance] = cubePositions[i];
-    //     }
-    //    for (std::map<float, glm::vec3>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it)
-    //     {
-    //         model = glm::mat4(1.0f);
-    //         model = glm::translate(model, it->second);
-    //         float angle = 20.0f * it->first;
-    //         model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-    //         lightingShader.setMat4("model", model);
-    //         glDrawArrays(GL_TRIANGLES, 0, 36);
-    //     }
+    
     for (auto pos : cubePositions)
     {
         // calculate the model matrix for each object and pass it to shader before drawing
         model = glm::mat4(1.0f);
         model = glm::translate(model, pos);
         lightingShader.setMat4("model", model);
-
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 
@@ -156,10 +137,10 @@ void cubeDemo::Draw(Camera &camera, int SCR_WIDTH, int SCR_HEIGHT)
 
     // we now draw as many light bulbs as we have point lights.
     glBindVertexArray(lightCubeVAO);
-    for (auto pos : pointLightPositions)
+    for (auto i = 0 ; i < sizeof(pointLightPositions) / sizeof(pointLightPositions[0]); i++)
     {
         model = glm::mat4(1.0f);
-        model = glm::translate(model, pos);
+        model = glm::translate(model, pointLightPositions[i]);
         model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
         lightCubeShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
