@@ -27,7 +27,6 @@ else()
     add_compile_options(-Wall)
 endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
-
 #set(CMAKE_CXX_FLAGS "-fvisibility=hidden")
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa
 #-framework OpenGL -framework IOKit")

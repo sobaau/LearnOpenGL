@@ -2,17 +2,10 @@
 #include "cube_demo.h"
 
 cubeDemo::cubeDemo() :
-#ifdef __APPLE__
-    lightCubeShader("/Users/soba/dev/code/LearnOpenGL/src/shaders/shader.vert", "/Users/soba/dev/code/LearnOpenGL/src/shaders/light_cube.frag"),
-    lightingShader("/Users/soba/dev/code/LearnOpenGL/src/shaders/shader.vert", "/Users/soba/dev/code/LearnOpenGL/src/shaders/light.frag"),
-    diffuseMap(loadTexture("/Users/soba/dev/code/LearnOpenGL/src/textures/container2.png")),
-    specularMap(loadTexture("/Users/soba/dev/code/LearnOpenGL/src/textures/container2_specular.png"))
-#elif _WIN32
     lightCubeShader("shaders/shader.vert", "shaders/light_cube.frag"),
     lightingShader("shaders/shader.vert", "shaders/light.frag"),
     diffuseMap(loadTexture("textures/container2.png")),
     specularMap(loadTexture("textures/container2_specular.png"))
-#endif
 {
     glGenVertexArrays(1, &cubeVAO);
     glGenBuffers(1, &VBO);
@@ -137,7 +130,7 @@ void cubeDemo::Draw(Camera &camera, int SCR_WIDTH, int SCR_HEIGHT,glm::mat4 proj
 
     // we now draw as many light bulbs as we have point lights.
     glBindVertexArray(lightCubeVAO);
-    for (auto i = 0 ; i < sizeof(pointLightPositions) / sizeof(pointLightPositions[0]); i++)
+    for (auto i = 0 ; i < sizeof(*pointLightPositions) / sizeof(pointLightPositions[0]); i++)
     {
         model = glm::mat4(1.0f);
         model = glm::translate(model, pointLightPositions[i]);

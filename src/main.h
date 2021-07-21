@@ -25,7 +25,7 @@ void processInput(GLFWwindow *window);
 Framebuffer initFrameBuffer();
 void mirror(Framebuffer &framebuff, cubeDemo &cubes, Shader &sponzaShader, Model &sponzaModel, glm::vec3 *pointLightPositions, Grass &grass);
 void mirrorQuad(Shader &screenShader, Framebuffer const &framebuff);
-unsigned int loadCubemap(vector<std::string> faces);
+unsigned int loadCubemap(std::vector<std::string> faces);
 // settings
 unsigned int SCR_WIDTH = 1280;
 unsigned int SCR_HEIGHT = 720;

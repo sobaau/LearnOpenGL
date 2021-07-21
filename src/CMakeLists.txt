@@ -42,6 +42,15 @@ IF(WIN32)
 ENDIF()
 target_link_libraries(LearnOpenGL PUBLIC glfw assimp imgui glm glad)
 target_compile_features(LearnOpenGL PUBLIC cxx_std_17)
+add_custom_command(TARGET LearnOpenGL PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_SOURCE_DIR}/src/shaders/ $<TARGET_FILE_DIR:LearnOpenGL>/shaders/)
+add_custom_command(TARGET LearnOpenGL PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_SOURCE_DIR}/src/textures/ $<TARGET_FILE_DIR:LearnOpenGL>/textures/)
+add_custom_command(TARGET LearnOpenGL PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_SOURCE_DIR}/src/sponza/ $<TARGET_FILE_DIR:LearnOpenGL>/sponza/)
 set(CMAKE_CXX_FLAGS "-fvisibility=hidden")
 # add_custom_command(
 #         TARGET LearnOpenGL POST_BUILD

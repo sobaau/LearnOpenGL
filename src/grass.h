@@ -25,14 +25,8 @@ class Grass
         1.0f,  0.5f,  0.0f,  1.0f,  0.0f
         };
 
-#ifdef __APPLE__
-    Shader grassShader{"/Users/soba/dev/code/LearnOpenGL/src/shaders/grass.vert",
-                       "/Users/soba/dev/code/LearnOpenGL/src/shaders/grass.frag"};
-    unsigned int grassTexture = loadTexture("/Users/soba/dev/code/LearnOpenGL/src/textures/grass.png");
-#elif _WIN32
     Shader grassShader{"shaders/grass.vert", "shaders/grass.frag"};
     unsigned int grassTexture = loadTexture("textures/grass.png");
-#endif
     std::map<float, glm::vec3> sorted;
     unsigned int grassVAO;
     unsigned int grassVBO;

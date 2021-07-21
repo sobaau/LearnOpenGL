@@ -48,14 +48,9 @@ int main()
  
    
     //stbi_set_flip_vertically_on_load(true);
-    #ifdef __APPLE__
-        Shader sponzaShader("/Users/soba/dev/code/LearnOpenGL/src/shaders/shader.vert", "/Users/soba/dev/code/LearnOpenGL/src/shaders/light.frag");
-        Model sponzaModel("/Users/soba/dev/code/LearnOpenGL/src/sponza/sponza.obj");
-        Shader screenShader("/Users/soba/dev/code/LearnOpenGL/src/shaders/screen.vert","/Users/soba/dev/code/LearnOpenGL/src/shaders/screen.frag");
-    #elif _WIN32
-        Shader ourShader("shaders/shader.vert", "shaders/light.frag");
-        Model ourModel("sponza/sponza.obj");
-    #endif
+    Shader sponzaShader("shaders/shader.vert", "shaders/light.frag");
+    Model sponzaModel("sponza/sponza.obj");
+    Shader screenShader("shaders/screen.vert","shaders/screen.frag");
     screenShader.use();
     screenShader.setInt("screenTexture", 0);
 
@@ -183,7 +178,7 @@ Framebuffer initFrameBuffer() {
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
     // now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << endl;
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     return Framebuffer{quadVAO, quadVBO,fb,textureColorbuffer,rbo};
 }
