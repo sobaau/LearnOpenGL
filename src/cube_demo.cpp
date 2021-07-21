@@ -2,8 +2,65 @@
 #include "cube_demo.h"
 
 cubeDemo::cubeDemo() :
+vertices({
+    // positions          // normals           // texture coords
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f
+    }),
+    cubePositions({
+        glm::vec3( 0.0f,  0.0f,  0.0f),
+        glm::vec3( 2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3( 2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3( 1.3f, -2.0f, -2.5f),
+        glm::vec3( 1.5f,  2.0f, -2.5f),
+        glm::vec3( 1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    }),
     lightCubeShader("shaders/shader.vert", "shaders/light_cube.frag"),
     lightingShader("shaders/shader.vert", "shaders/light.frag"),
+    lightPos(1.2f, 1.0f, 2.0f),
     diffuseMap(loadTexture("textures/container2.png")),
     specularMap(loadTexture("textures/container2_specular.png"))
 {
@@ -33,7 +90,7 @@ cubeDemo::cubeDemo() :
     lightingShader.setInt("material.specular", 1);
 }
 
-void cubeDemo::Draw(Camera &camera, int SCR_WIDTH, int SCR_HEIGHT,glm::mat4 projection, glm::mat4 view, glm::vec3 *pointLightPositions)
+void cubeDemo::Draw(Camera const &camera, const unsigned int &SCR_WIDTH, const unsigned int &SCR_HEIGHT, const glm::mat4 &projection,  const glm::mat4 &view, const std::vector<glm::vec3> &pointLightPositions)
 {
 
     // be sure to activate shader when setting uniforms/drawing objects
@@ -51,39 +108,15 @@ void cubeDemo::Draw(Camera &camera, int SCR_WIDTH, int SCR_HEIGHT,glm::mat4 proj
     lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
     lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
     lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-    // point light 1
-    lightingShader.setVec3("pointLights[0].position", pointLightPositions[0]);
-    lightingShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-    lightingShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-    lightingShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-    lightingShader.setFloat("pointLights[0].constant", 1.0f);
-    lightingShader.setFloat("pointLights[0].linear", 0.09f);
-    lightingShader.setFloat("pointLights[0].quadratic", 0.032f);
-    // point light 2
-    lightingShader.setVec3("pointLights[1].position", pointLightPositions[1]);
-    lightingShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-    lightingShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-    lightingShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-    lightingShader.setFloat("pointLights[1].constant", 1.0f);
-    lightingShader.setFloat("pointLights[1].linear", 0.09f);
-    lightingShader.setFloat("pointLights[1].quadratic", 0.032f);
-    // point light 3
-    lightingShader.setVec3("pointLights[2].position", pointLightPositions[2]);
-    lightingShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-    lightingShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
-    lightingShader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-    lightingShader.setFloat("pointLights[2].constant", 1.0f);
-    lightingShader.setFloat("pointLights[2].linear", 0.09f);
-    lightingShader.setFloat("pointLights[2].quadratic", 0.032f);
-    // point light 4
-    lightingShader.setVec3("pointLights[3].position", pointLightPositions[3]);
-    lightingShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-    lightingShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
-    lightingShader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-    lightingShader.setFloat("pointLights[3].constant", 1.0f);
-    lightingShader.setFloat("pointLights[3].linear", 0.09f);
-    lightingShader.setFloat("pointLights[3].quadratic", 0.032f);
-    // spotLight
+    for(auto i = 0; i < pointLightPositions.size(); i++){
+        lightingShader.setVec3("pointLights["+std::to_string(i)+"].position", pointLightPositions[i]);
+        lightingShader.setVec3("pointLights["+std::to_string(i)+"].ambient", 0.05f, 0.05f, 0.05f);
+        lightingShader.setVec3("pointLights["+std::to_string(i)+"].diffuse", 0.8f, 0.8f, 0.8f);
+        lightingShader.setVec3("pointLights["+std::to_string(i)+"].specular", 1.0f, 1.0f, 1.0f);
+        lightingShader.setFloat("pointLights["+std::to_string(i)+"].constant", 1.0f);
+        lightingShader.setFloat("pointLights["+std::to_string(i)+"].linear", 0.09f);
+        lightingShader.setFloat("pointLights["+std::to_string(i)+"].quadratic", 0.032f);
+    }
     lightingShader.setVec3("spotLight.position", camera.Position);
     lightingShader.setVec3("spotLight.direction", camera.Front);
     lightingShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
@@ -130,7 +163,7 @@ void cubeDemo::Draw(Camera &camera, int SCR_WIDTH, int SCR_HEIGHT,glm::mat4 proj
 
     // we now draw as many light bulbs as we have point lights.
     glBindVertexArray(lightCubeVAO);
-    for (auto i = 0 ; i < sizeof(*pointLightPositions) / sizeof(pointLightPositions[0]); i++)
+    for (auto i = 0 ; i < pointLightPositions.size(); i++)
     {
         model = glm::mat4(1.0f);
         model = glm::translate(model, pointLightPositions[i]);

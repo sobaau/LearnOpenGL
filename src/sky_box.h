@@ -10,63 +10,10 @@
 #include "shader.h"
 
 class SkyBox {
-    std::vector<std::string> faces = 
-    {
-        "/Users/soba/dev/code/LearnOpenGL/src/textures/skybox/right.jpg",
-        "/Users/soba/dev/code/LearnOpenGL/src/textures/skybox/left.jpg",
-        "/Users/soba/dev/code/LearnOpenGL/src/textures/skybox/top.jpg",
-        "/Users/soba/dev/code/LearnOpenGL/src/textures/skybox/bottom.jpg",
-        "/Users/soba/dev/code/LearnOpenGL/src/textures/skybox/front.jpg",
-        "/Users/soba/dev/code/LearnOpenGL/src/textures/skybox/back.jpg"
-    };
-    float skyboxVertices[108] = {
-    // positions          
-    -1.0f,  1.0f, -1.0f,
-    -1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-
-    -1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
-
-     1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-
-    -1.0f, -1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
-
-    -1.0f,  1.0f, -1.0f,
-     1.0f,  1.0f, -1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f, -1.0f,
-
-    -1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-     1.0f, -1.0f,  1.0f
-};
+    std::vector<std::string> faces;
+    std::array<float,108> skyboxVertices;
     Shader skyBoxShader;
     unsigned int skyboxVAO, skyboxVBO;;
-
-    unsigned int loadCubemap();
 public:
     SkyBox();
     unsigned int skyTexture;

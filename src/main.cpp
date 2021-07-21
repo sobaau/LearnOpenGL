@@ -1,13 +1,27 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "main.h"
 
+// settings
+unsigned int SCR_WIDTH = 1280;
+unsigned int SCR_HEIGHT = 720;
+
+// camera
+Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
+auto lastX = SCR_WIDTH / 2.0f;
+auto lastY = SCR_HEIGHT / 2.0f;
+auto firstMouse = true;
+// timing
+auto deltaTime = 0.0f; // time between current frame and last frame
+auto lastFrame = 0.0f;
+
 int main()
 {
+    
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
@@ -76,6 +90,7 @@ int main()
     cubeDemo cubes;
     SkyBox skyBox;
     ReflCube reflCube;
+    
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while (!glfwWindowShouldClose(window))
     {
@@ -97,10 +112,9 @@ int main()
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         auto view = camera.GetViewMatrix();
 
-        cubes.Draw(camera, SCR_WIDTH, SCR_HEIGHT,projection,view, pointLightPositions.data());
+        cubes.Draw(camera, SCR_WIDTH, SCR_HEIGHT,projection,view, pointLightPositions);
         sponzaShader.use();
-        
-        renderLights(sponzaShader, pointLightPositions.data());
+        renderLights(sponzaShader, pointLightPositions);
         // view/projection transformations
         sponzaShader.setMat4("projection", projection);
         sponzaShader.setMat4("view", view);
@@ -183,7 +197,7 @@ Framebuffer initFrameBuffer() {
     return Framebuffer{quadVAO, quadVBO,fb,textureColorbuffer,rbo};
 }
 
-void mirror(Framebuffer &framebuff, cubeDemo &cubes,Shader &sponzaShader, Model &sponzaModel, glm::vec3 *pointLightPositions, Grass &grass){
+void mirror(Framebuffer &framebuff, cubeDemo &cubes,Shader &sponzaShader, Model &sponzaModel, std::vector<glm::vec3> pointLightPositions, Grass &grass){
          // bind to framebuffer and draw scene as we normally would to color texture 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuff.framebuffer);
         glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
@@ -221,7 +235,7 @@ void mirrorQuad(Shader &screenShader, Framebuffer const &framebuff){
         glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-void renderLights(Shader &shader, glm::vec3 *pointLightPositions){
+void renderLights(Shader &shader, std::vector<glm::vec3> &pointLightPositions){
         shader.setInt("material.diffuse", 0);
         shader.setInt("material.specular", 1);
         shader.setFloat("material.shininess", 32.0f);
@@ -236,38 +250,15 @@ void renderLights(Shader &shader, glm::vec3 *pointLightPositions){
         shader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
         shader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
         shader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-        // point light 1
-        shader.setVec3("pointLights[0].position", pointLightPositions[0]);
-        shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-        shader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-        shader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-        shader.setFloat("pointLights[0].constant", 1.0f);
-        shader.setFloat("pointLights[0].linear", 0.09f);
-        shader.setFloat("pointLights[0].quadratic", 0.032f);
-        // point light 2
-        shader.setVec3("pointLights[1].position", pointLightPositions[1]);
-        shader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-        shader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-        shader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-        shader.setFloat("pointLights[1].constant", 1.0f);
-        shader.setFloat("pointLights[1].linear", 0.09f);
-        shader.setFloat("pointLights[1].quadratic", 0.032f);
-        // point light 3
-        shader.setVec3("pointLights[2].position", pointLightPositions[2]);
-        shader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-        shader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
-        shader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-        shader.setFloat("pointLights[2].constant", 1.0f);
-        shader.setFloat("pointLights[2].linear", 0.09f);
-        shader.setFloat("pointLights[2].quadratic", 0.032f);
-        // point light 4
-        shader.setVec3("pointLights[3].position", pointLightPositions[3]);
-        shader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-        shader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
-        shader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-        shader.setFloat("pointLights[3].constant", 1.0f);
-        shader.setFloat("pointLights[3].linear", 0.09f);
-        shader.setFloat("pointLights[3].quadratic", 0.032f);
+        for(auto i = 0; i < pointLightPositions.size(); i++){
+            shader.setVec3("pointLights["+std::to_string(i)+"].position", pointLightPositions[i]);
+            shader.setVec3("pointLights["+std::to_string(i)+"].ambient", 0.05f, 0.05f, 0.05f);
+            shader.setVec3("pointLights["+std::to_string(i)+"].diffuse", 0.8f, 0.8f, 0.8f);
+            shader.setVec3("pointLights["+std::to_string(i)+"].specular", 1.0f, 1.0f, 1.0f);
+            shader.setFloat("pointLights["+std::to_string(i)+"].constant", 1.0f);
+            shader.setFloat("pointLights["+std::to_string(i)+"].linear", 0.09f);
+            shader.setFloat("pointLights["+std::to_string(i)+"].quadratic", 0.032f);
+        }
         // spotLight
         shader.setVec3("spotLight.position", camera.Position);
         shader.setVec3("spotLight.direction", camera.Front);

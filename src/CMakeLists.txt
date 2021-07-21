@@ -52,12 +52,7 @@ add_custom_command(TARGET LearnOpenGL PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
                        ${CMAKE_SOURCE_DIR}/src/sponza/ $<TARGET_FILE_DIR:LearnOpenGL>/sponza/)
 set(CMAKE_CXX_FLAGS "-fvisibility=hidden")
-# add_custom_command(
-#         TARGET LearnOpenGL POST_BUILD
-#         COMMAND ${CMAKE_COMMAND} -E copy
-#                 ${CMAKE_SOURCE_DIR}/src/shaders/*
-#                 ${CMAKE_CURRENT_BINARY_DIR}/shaders)
-
+target_precompile_headers(LearnOpenGL PUBLIC ${HEADER_FILES})
 if (CMAKE_BUILD_TYPE EQUAL "Debug")
     message("debug mode")
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders DESTINATION ${CMAKE_BINARY_DIR}/bin/Debug/shaders)

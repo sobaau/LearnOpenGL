@@ -13,6 +13,7 @@
 #include <map>
 #include <vector>
 #include "shader.h"
+#include "texture_loader.h"
 #include "mesh.h"
 
 unsigned int TextureFromFile(const char *path, const std::string &directory, bool gamma = false);

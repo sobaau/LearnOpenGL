@@ -8,7 +8,6 @@ class Shader
 public:
     // the program ID
     unsigned int ID;
-    Shader();
     // constructor reads and builds the shader
     Shader(const char* vertexPath, const char* fragmentPath);
     // use/activate the shader

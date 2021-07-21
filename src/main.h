@@ -1,3 +1,5 @@
+#ifndef __MAIN_H__
+#define __MAIN_H__
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -20,21 +22,10 @@ struct Framebuffer
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
-void renderLights(Shader &ourShader, glm::vec3 *pointLightPositions);
+void renderLights(Shader &ourShader, std::vector<glm::vec3> &pointLightPositions);
 void processInput(GLFWwindow *window);
 Framebuffer initFrameBuffer();
-void mirror(Framebuffer &framebuff, cubeDemo &cubes, Shader &sponzaShader, Model &sponzaModel, glm::vec3 *pointLightPositions, Grass &grass);
+void mirror(Framebuffer &framebuff, cubeDemo &cubes, Shader &sponzaShader, Model &sponzaModel, std::vector<glm::vec3> &pointLightPositions, Grass &grass);
 void mirrorQuad(Shader &screenShader, Framebuffer const &framebuff);
-unsigned int loadCubemap(std::vector<std::string> faces);
-// settings
-unsigned int SCR_WIDTH = 1280;
-unsigned int SCR_HEIGHT = 720;
 
-// camera
-Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
-auto lastX = SCR_WIDTH / 2.0f;
-auto lastY = SCR_HEIGHT / 2.0f;
-auto firstMouse = true;
-// timing
-auto deltaTime = 0.0f; // time between current frame and last frame
-auto lastFrame = 0.0f;
+#endif // __MAIN_H__
