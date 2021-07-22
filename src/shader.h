@@ -10,6 +10,7 @@ public:
     unsigned int ID;
     // constructor reads and builds the shader
     Shader(const char* vertexPath, const char* fragmentPath);
+    Shader(const char* vertexPath, const char* geoPath ,const char* fragmentPath);
     // use/activate the shader
     void use();
     // utility uniform functions
@@ -28,6 +29,7 @@ public:
 
 private:
     void checkCompileErrors(unsigned int shader, std::string type);
+    static std::string  loadShader(const char *shaderPath);
 };
   
 #endif

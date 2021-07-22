@@ -62,12 +62,13 @@ int main()
  
    
     //stbi_set_flip_vertically_on_load(true);
-    Shader sponzaShader("shaders/shader.vert", "shaders/light.frag");
+    Shader sponzaShader("shaders/shader.vert","shaders/expload.geom", "shaders/light.frag");
     Model sponzaModel("sponza/sponza.obj");
     Shader screenShader("shaders/screen.vert","shaders/screen.frag");
+    Shader geoShader("shaders/geo.vert","shaders/geo.geom","shaders/geo.frag");
     screenShader.use();
     screenShader.setInt("screenTexture", 0);
-
+ 
     imgDemo demoWindow(window);
     std::vector<glm::vec3> pointLightPositions = {
         glm::vec3( 0.7f,  0.2f,  2.0f),
@@ -83,9 +84,26 @@ int main()
         glm::vec3(-0.3f, 0.0f, -2.3f),
         glm::vec3(0.5f, 0.0f, -0.6f)
     };
-
+   float points[] = {
+        -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // top-left
+         0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // top-right
+         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // bottom-right
+        -0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // bottom-left
+    };
     //Framebuffer framebuff = initFrameBuffer();
-    
+    unsigned int GVBO, GVAO;
+    glGenVertexArrays(1, &GVAO);
+    glGenBuffers(1, &GVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, GVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
+    glBindVertexArray(GVAO);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(2 * sizeof(float)));
+
+    glBindVertexArray(0);
+ 
     Grass grass(grassLocations);
     cubeDemo cubes;
     SkyBox skyBox;
@@ -123,13 +141,16 @@ int main()
         model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
         sponzaShader.setMat4("model", model);
+        //sponzaShader.setFloat("time", glfwGetTime());  
         sponzaModel.Draw(sponzaShader);
         glActiveTexture(GL_TEXTURE0);
-
         glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.skyTexture);  		
         reflCube.draw(view, projection, camera);
         view = glm::mat4(glm::mat3(camera.GetViewMatrix()));  
         skyBox.draw(view, projection);
+        geoShader.use();
+        glBindVertexArray(GVAO);
+        glDrawArrays(GL_POINTS, 0, 4);
         view = camera.GetViewMatrix();
         grass.Draw(projection, view, camera.Position);
         //mirrorQuad(screenShader,framebuff);
