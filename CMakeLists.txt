@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.7...3.20)
-#set( CMAKE_VERBOSE_MAKEFILE on )
 if(${CMAKE_VERSION} VERSION_LESS 3.12)
     cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
 endif()
 project(LearnOpenGL VERSION 1.0
         DESCRIPTION "https://learnopengl.com/"
         LANGUAGES CXX C)
+find_program(iwyu_path REQUIRED NAMES include-what-you-use iwyu)
 
 set(CMAKE_BUILD_PARALLEL_LEVEL 4)
 set(CMAKE_CXX_STANDARD 14)
@@ -27,6 +27,9 @@ else()
     # lots of warnings and all warnings as errors
     add_compile_options(-Wall)
 endif()
+set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
+#set( CMAKE_VERBOSE_MAKEFILE on )
+
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 #set(CMAKE_CXX_FLAGS "-fvisibility=hidden")
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa

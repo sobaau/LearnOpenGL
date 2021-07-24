@@ -1,12 +1,9 @@
 #ifndef __SKY_BOX_H__
 #define __SKY_BOX_H__
 #include <vector>
-#include <string>
+#include <array>
 #include <iostream>
-#include <glad/glad.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include "shader.h"
 
 class SkyBox {

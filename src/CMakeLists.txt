@@ -24,7 +24,9 @@ file(GLOB_RECURSE HEADER_FILES
 #     clang-tidy;
 #     -checks=*;)
 
+
 add_executable(LearnOpenGL ${SOURCE_FILES} ${HEADER_FILES})
+
 target_include_directories(LearnOpenGL PUBLIC 
 ${CMAKE_CURRENT_SOURCE_DIR}/include
 ${CMAKE_SOURCE_DIR}/dependencies/glfw/include
@@ -53,7 +55,7 @@ add_custom_command(TARGET LearnOpenGL POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
                        ${CMAKE_SOURCE_DIR}/src/sponza/ $<TARGET_FILE_DIR:LearnOpenGL>/sponza/)
 set(CMAKE_CXX_FLAGS "-fvisibility=hidden")
-target_precompile_headers(LearnOpenGL PUBLIC ${HEADER_FILES})
+#target_precompile_headers(LearnOpenGL PUBLIC ${HEADER_FILES})
 if (CMAKE_BUILD_TYPE EQUAL "Debug")
     message("debug mode")
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders DESTINATION ${CMAKE_BINARY_DIR}/bin/Debug/shaders)

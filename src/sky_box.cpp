@@ -1,3 +1,5 @@
+#include <glad/glad.h>
+#include <string>
 #include "texture_loader.h"
 #include "sky_box.h"
 

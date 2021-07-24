@@ -1,5 +1,8 @@
 
 #include <stb_image.h>
+#include <iostream>
+#include <string>
+#include <glad/glad.h>
 #include "texture_loader.h"
 
 unsigned int loadTexture(char const *path)
@@ -41,7 +44,7 @@ unsigned int loadTexture(char const *path)
     return textureID;
 }
 
-unsigned int TextureFromFile(const char *path, const std::string &directory, bool gamma)
+unsigned int TextureFromFile(const char *path, const std::string &directory)
 {
     std::string filename = std::string(path);
     filename = directory + '/' + filename;

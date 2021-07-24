@@ -1,5 +1,9 @@
-
 #include "img_demo.h"
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+#include <GLFW/glfw3.h>
+#include <glm/vec3.hpp>
+#include "imgui.h"
 
 imgDemo::imgDemo(GLFWwindow *window) : show_demo_window(true), show_another_window(false), clear_color(ImVec4(0.45f, 0.55f, 0.60f, 1.00f))
 {

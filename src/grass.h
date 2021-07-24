@@ -1,17 +1,11 @@
 #ifndef __GRASS_H__
 #define __GRASS_H__
-
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glad/glad.h>
-#include <vector>
-#include <map>
 #include <array>
-#include "camera.h"
+#include <map>
+#include <vector>
+#include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
 #include "shader.h"
-#include "texture_loader.h"
-
 class Grass
 {
     std::array<float, 30> transparentVertices;

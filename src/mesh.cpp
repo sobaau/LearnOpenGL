@@ -1,9 +1,13 @@
 #include "mesh.h"
+#include <cstddef>     // for offsetof
+#include <type_traits>  // for move
+#include <glad/glad.h>  // for GL_FALSE, GL_FLOAT, glEnableVertexAttribArray
+#include "shader.h"     // for Shader
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures) : 
-    vertices(vertices), 
-    indices(indices), 
-    textures(textures)
+    vertices(std::move(vertices)),
+    indices(std::move(indices)),
+    textures(std::move(textures))
 {
     // now that we have all the required data, set the vertex buffers and its attribute pointers.
     setupMesh();

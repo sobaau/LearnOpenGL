@@ -1,22 +1,38 @@
 #define STB_IMAGE_IMPLEMENTATION
+#include <cmath>                             
+#include <cstddef>                           
+#include <iostream>                           
+#include <string>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "main.h"
+#include "grass.h"
+#include "img_demo.h"
+#include "model.h"
+#include "r_cube.h"
+#include "shader.h"
+#include "sky_box.h"
+#include "camera.h"
+#include "cube_demo.h"
+
 
 // settings
 unsigned int SCR_WIDTH = 1280;
 unsigned int SCR_HEIGHT = 720;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
 auto lastX = SCR_WIDTH / 2.0f;
 auto lastY = SCR_HEIGHT / 2.0f;
 auto firstMouse = true;
 // timing
 auto deltaTime = 0.0f; // time between current frame and last frame
 auto lastFrame = 0.0f;
+Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
 
 int main()
 {
-    
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -31,7 +47,7 @@ int main()
     // glfw window creation
     // --------------------
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-    if (window == NULL)
+    if (window == nullptr)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -62,7 +78,7 @@ int main()
  
    
     //stbi_set_flip_vertically_on_load(true);
-    Shader sponzaShader("shaders/shader.vert","shaders/expload.geom", "shaders/light.frag");
+    Shader sponzaShader("shaders/shader.vert", "shaders/light.frag");
     Model sponzaModel("sponza/sponza.obj");
     Shader screenShader("shaders/screen.vert","shaders/screen.frag");
     Shader geoShader("shaders/geo.vert","shaders/geo.geom","shaders/geo.frag");
@@ -98,7 +114,7 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
     glBindVertexArray(GVAO);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)nullptr);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(2 * sizeof(float)));
 
@@ -108,7 +124,7 @@ int main()
     cubeDemo cubes;
     SkyBox skyBox;
     ReflCube reflCube;
-    
+
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while (!glfwWindowShouldClose(window))
     {
@@ -333,7 +349,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     lastX = xpos;
     lastY = ypos;
 
-   camera.ProcessMouseMovement(xoffset, yoffset);
+   camera.ProcessMouseMovement(xoffset, yoffset, true);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called

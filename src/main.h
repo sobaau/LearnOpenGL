@@ -2,19 +2,13 @@
 #define __MAIN_H__
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <vector>
+#include <glm/vec3.hpp>
 #define STB_IMAGE_IMPLEMENTATION
-#include <iostream>
-#include "cube_demo.h"
-#include "shader.h"
-#include "camera.h"
-#include "img_demo.h"
-#include "model.h"
-#include "grass.h"
-#include "sky_box.h"
-#include "r_cube.h"
+class Grass;
+class Model;
+class Shader;
+class cubeDemo;
 struct Framebuffer
 {
     unsigned int quadVAO, quadVBO, framebuffer, textureColorbuffer, rbo;

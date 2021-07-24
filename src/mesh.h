@@ -1,11 +1,12 @@
 #ifndef MESH_H
 #define MESH_H
-#include <glad/glad.h> // holds all OpenGL type declarations
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <string>
+#include <iosfwd>                     // for string
+#include <string>                     // for basic_string
 #include <vector>
-#include "shader.h"
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+class Shader;
 
 struct Vertex {
     // position

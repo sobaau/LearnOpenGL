@@ -1,6 +1,8 @@
-
 #include "r_cube.h"
-
+#include "camera.h"                      // for Camera
+#include "glad/glad.h"                   // for GL_ARRAY_BUFFER, GL_CULL_FACE
+#include <glm/ext/matrix_transform.hpp>
+#include <string>
 ReflCube::ReflCube() :
 reflShader("/Users/soba/dev/code/LearnOpenGL/src/shaders/reflection.vert","/Users/soba/dev/code/LearnOpenGL/src/shaders/reflection.frag")
 {

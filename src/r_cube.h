@@ -1,11 +1,8 @@
 #ifndef __R_CUBE_H__
 #define __R_CUBE_H__
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glad/glad.h>
-#include "camera.h"
-#include "shader.h"
+#include <glm/mat4x4.hpp> // glm::mat4
+#include "shader.h"                     // for Shader
+class Camera;
 
 class ReflCube{
     float vertices[216] = {

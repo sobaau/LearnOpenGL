@@ -1,14 +1,10 @@
 #pragma once
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glad/glad.h>
 #include <array>
-#include <iostream>
 #include <vector>
-#include "texture_loader.h"
-#include "camera.h"
+#include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
 #include "shader.h"
+class Camera;
 
 class cubeDemo {
     unsigned int VBO, cubeVAO;
@@ -19,7 +15,6 @@ class cubeDemo {
     Shader lightingShader;
 
 public:
-    glm::vec3 lightPos;
     const unsigned int diffuseMap;
     const unsigned int specularMap;
     cubeDemo();

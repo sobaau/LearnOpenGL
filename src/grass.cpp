@@ -1,4 +1,12 @@
 #include "grass.h"
+#include <iterator>
+#include <type_traits>
+#include <glad/glad.h>
+#include <glm/vec3.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <string>
+#include "texture_loader.h"
+
 Grass::Grass(std::vector<glm::vec3> loc) : transparentVertices({// positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
                                                                 0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
                                                                 0.0f, -0.5f, 0.0f, 0.0f, 1.0f,
@@ -9,7 +17,7 @@ Grass::Grass(std::vector<glm::vec3> loc) : transparentVertices({// positions    
                                                                 1.0f, 0.5f, 0.0f, 1.0f, 0.0f}),
                                            grassShader{"shaders/grass.vert", "shaders/grass.frag"},
                                            grassTexture(loadTexture("textures/grass.png")),
-                                           locations(loc)
+                                           locations(std::move(loc))
 {
     glGenVertexArrays(1, &grassVAO);
     glGenBuffers(1, &grassVBO);
@@ -43,10 +51,10 @@ void Grass::Draw(glm::mat4 projection, glm::mat4 view, glm::vec3 cameraPos)
     grassShader.use();
     grassShader.setMat4("projection", projection);
     grassShader.setMat4("view", view);
-    for (unsigned int i = 0; i < locations.size(); i++)
+    for (auto & location : locations)
     {
-        float distance = glm::length(cameraPos - locations[i]);
-        sorted[distance] = locations[i];
+        float distance = glm::length(cameraPos - location);
+        sorted[distance] = location;
     }
     for (auto it = sorted.rbegin(); it != sorted.rend(); ++it)
     {
@@ -55,12 +63,7 @@ void Grass::Draw(glm::mat4 projection, glm::mat4 view, glm::vec3 cameraPos)
         grassShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
-    // for (auto loc : locations){
-    //     auto model = glm::mat4(1.0f);
-    //     model = glm::translate(model, loc);
-    //     grassShader.setMat4("model", model);
-    //     glDrawArrays(GL_TRIANGLES, 0, 6);
-    // }
+
     sorted.clear();
     glEnable(GL_CULL_FACE);
 

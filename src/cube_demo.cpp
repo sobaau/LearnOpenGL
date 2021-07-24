@@ -1,5 +1,12 @@
-#include <vector>
 #include "cube_demo.h"
+#include <cmath>                             // for cos
+#include <string>                             // for operator+, to_string
+#include <vector>                             // for allocator, vector
+#include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include "camera.h"                           // for Camera
+#include "texture_loader.h"
 
 cubeDemo::cubeDemo() :
 vertices({
@@ -60,7 +67,6 @@ vertices({
     }),
     lightCubeShader("shaders/shader.vert", "shaders/light_cube.frag"),
     lightingShader("shaders/shader.vert", "shaders/light.frag"),
-    lightPos(1.2f, 1.0f, 2.0f),
     diffuseMap(loadTexture("textures/container2.png")),
     specularMap(loadTexture("textures/container2_specular.png"))
 {
@@ -163,10 +169,10 @@ void cubeDemo::Draw(Camera const &camera, const unsigned int &SCR_WIDTH, const u
 
     // we now draw as many light bulbs as we have point lights.
     glBindVertexArray(lightCubeVAO);
-    for (auto i = 0 ; i < pointLightPositions.size(); i++)
+    for (auto pointLightPosition : pointLightPositions)
     {
         model = glm::mat4(1.0f);
-        model = glm::translate(model, pointLightPositions[i]);
+        model = glm::translate(model, pointLightPosition);
         model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
         lightCubeShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
