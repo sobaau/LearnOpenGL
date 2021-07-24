@@ -10,6 +10,7 @@ ENDIF()
 IF(WIN32)
     find_package(OpenGL REQUIRED)
 ENDIF()
+
 # Add source files
 file(GLOB_RECURSE SOURCE_FILES 
 	${CMAKE_SOURCE_DIR}/src/*.c
