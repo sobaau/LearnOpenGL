@@ -1,5 +1,7 @@
-#ifndef MESH_H
-#define MESH_H
+#ifndef MESH_H_
+#define MESH_H_
+
+
 #include <iosfwd>                     // for string
 #include <string>                     // for basic_string
 #include <vector>
@@ -47,4 +49,5 @@ private:
     // initializes all the buffer objects/arrays
     void setupMesh();
 };
-#endif
+
+#endif // MESH_H_

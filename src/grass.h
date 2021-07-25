@@ -1,5 +1,6 @@
-#ifndef __GRASS_H__
-#define __GRASS_H__
+#ifndef GRASS_H_
+#define GRASS_H_
+
 #include <array>
 #include <map>
 #include <vector>
@@ -21,4 +22,4 @@ public:
     void cleanUp();
     void Draw(glm::mat4 projection, glm::mat4 view, glm::vec3 cameraPos);
 };
-#endif // __GRASS_H__
+#endif // GRASS_H_

@@ -4,7 +4,7 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <string>
 ReflCube::ReflCube() :
-reflShader("/Users/soba/dev/code/LearnOpenGL/src/shaders/reflection.vert","/Users/soba/dev/code/LearnOpenGL/src/shaders/reflection.frag")
+reflShader("shaders/reflection.vert","shaders/reflection.frag")
 {
     glGenVertexArrays(1,&RVAO);
     glGenBuffers(1, &RVBO);
@@ -12,7 +12,7 @@ reflShader("/Users/soba/dev/code/LearnOpenGL/src/shaders/reflection.vert","/User
     glBindBuffer(GL_ARRAY_BUFFER, RVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)nullptr);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     reflShader.use();

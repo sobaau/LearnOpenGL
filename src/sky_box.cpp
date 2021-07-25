@@ -5,12 +5,12 @@
 
 SkyBox::SkyBox() :  faces(
     {
-        "/Users/soba/dev/code/LearnOpenGL/src/textures/skybox/right.jpg",
-        "/Users/soba/dev/code/LearnOpenGL/src/textures/skybox/left.jpg",
-        "/Users/soba/dev/code/LearnOpenGL/src/textures/skybox/top.jpg",
-        "/Users/soba/dev/code/LearnOpenGL/src/textures/skybox/bottom.jpg",
-        "/Users/soba/dev/code/LearnOpenGL/src/textures/skybox/front.jpg",
-        "/Users/soba/dev/code/LearnOpenGL/src/textures/skybox/back.jpg"
+        "textures/skybox/right.jpg",
+        "textures/skybox/left.jpg",
+        "textures/skybox/top.jpg",
+        "textures/skybox/bottom.jpg",
+        "textures/skybox/front.jpg",
+        "textures/skybox/back.jpg"
     }), 
      skyboxVertices ({
     // positions          
@@ -65,7 +65,7 @@ SkyBox::SkyBox() :  faces(
     glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)nullptr);
     skyBoxShader.use();
     skyBoxShader.setInt("skybox", 0);
 }

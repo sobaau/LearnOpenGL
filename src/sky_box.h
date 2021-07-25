@@ -1,5 +1,7 @@
-#ifndef __SKY_BOX_H__
-#define __SKY_BOX_H__
+#ifndef SKY_BOX_H_
+#define SKY_BOX_H_
+
+
 #include <vector>
 #include <array>
 #include <iostream>
@@ -10,11 +12,12 @@ class SkyBox {
     std::vector<std::string> faces;
     std::array<float,108> skyboxVertices;
     Shader skyBoxShader;
-    unsigned int skyboxVAO, skyboxVBO;;
+    unsigned int skyboxVAO, skyboxVBO;
 public:
     SkyBox();
     unsigned int skyTexture;
     void draw(glm::mat4 &view, glm::mat4 &projection);
 };
 
-#endif // __SKY_BOX_H__
+
+#endif // SKY_BOX_H_

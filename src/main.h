@@ -1,5 +1,7 @@
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef MAIN_H_
+#define MAIN_H_
+
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <vector>
@@ -22,4 +24,4 @@ Framebuffer initFrameBuffer();
 void mirror(Framebuffer &framebuff, cubeDemo &cubes, Shader &sponzaShader, Model &sponzaModel, std::vector<glm::vec3> &pointLightPositions, Grass &grass);
 void mirrorQuad(Shader &screenShader, Framebuffer const &framebuff);
 
-#endif // __MAIN_H__
+#endif // MAIN_H_

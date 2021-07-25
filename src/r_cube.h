@@ -1,5 +1,7 @@
-#ifndef __R_CUBE_H__
-#define __R_CUBE_H__
+#ifndef R_CUBE_H_
+#define R_CUBE_H_
+
+
 #include <glm/mat4x4.hpp> // glm::mat4
 #include "shader.h"                     // for Shader
 class Camera;
@@ -55,4 +57,5 @@ public:
     ReflCube();
     void draw(glm::mat4 &view, glm::mat4 &projection, Camera &camera);
 };
-#endif // __R_CUBE_H__
+
+#endif // R_CUBE_H_

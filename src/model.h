@@ -1,5 +1,6 @@
-#ifndef MODEL_H
-#define MODEL_H
+#ifndef MODEL_H_
+#define MODEL_H_
+
 
 #include <fstream>            // for string
 #include <vector>             // for vector
@@ -39,4 +40,5 @@ private:
     std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string const &typeName);
 };
 
-#endif
+
+#endif // MODEL_H_
