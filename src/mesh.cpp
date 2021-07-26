@@ -1,13 +1,13 @@
 #include "mesh.h"
+#include "shader.h"    // for Shader
 #include <cstddef>     // for offsetof
-#include <type_traits>  // for move
-#include <glad/glad.h>  // for GL_FALSE, GL_FLOAT, glEnableVertexAttribArray
-#include "shader.h"     // for Shader
+#include <glad/glad.h> // for GL_FALSE, GL_FLOAT, glEnableVertexAttribArray
+#include <type_traits> // for move
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures) : 
-    vertices(std::move(vertices)),
-    indices(std::move(indices)),
-    textures(std::move(textures))
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,
+           std::vector<Texture> textures) : vertices(std::move(vertices)),
+                                            indices(std::move(indices)),
+                                            textures(std::move(textures))
 {
     // now that we have all the required data, set the vertex buffers and its attribute pointers.
     setupMesh();
@@ -21,8 +21,7 @@ void Mesh::Draw(Shader &shader)
     unsigned int specularNr = 1;
     unsigned int normalNr = 1;
     unsigned int heightNr = 1;
-    for (unsigned int i = 0; i < textures.size(); i++)
-    {
+    for (unsigned int i = 0; i < textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
         // retrieve texture number (the N in diffuse_textureN)
         std::string number;

@@ -1,9 +1,9 @@
 #include "img_demo.h"
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
+#include "imgui.h"
 #include <GLFW/glfw3.h>
 #include <glm/vec3.hpp>
-#include "imgui.h"
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 imgDemo::imgDemo(GLFWwindow *window) : show_demo_window(true), show_another_window(false), clear_color(ImVec4(0.45f, 0.55f, 0.60f, 1.00f))
 {
@@ -39,9 +39,9 @@ void imgDemo::draw(glm::vec3 *point)
         ImGui::Checkbox("Demo Window", &show_demo_window); // Edit bools storing our window open/close state
         ImGui::Checkbox("Another Window", &show_another_window);
 
-        ImGui::SliderFloat3("float3", (float *)&point[0], 0.0f, 100.0f);              // Edit 1 float using a slider from 0.0f to 1.0f
-             // Edit 1 float using a slider from 0.0f to 1.0f
-        ImGui::ColorEdit3("clear color", (float *)&point[0]); // Edit 3 floats representing a color
+        ImGui::SliderFloat3("float3", (float *)&point[0], 0.0f, 100.0f); // Edit 1 float using a slider from 0.0f to 1.0f
+                                                                         // Edit 1 float using a slider from 0.0f to 1.0f
+        ImGui::ColorEdit3("clear color", (float *)&point[0]);            // Edit 3 floats representing a color
 
         if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return true when edited/activated)
             counter++;
@@ -53,8 +53,7 @@ void imgDemo::draw(glm::vec3 *point)
     }
 
     // 3. Show another simple window.
-    if (show_another_window)
-    {
+    if (show_another_window) {
         ImGui::Begin("Another Window", &show_another_window); // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
         ImGui::Text("Hello from another window!");
         if (ImGui::Button("Close Me"))
@@ -66,7 +65,8 @@ void imgDemo::draw(glm::vec3 *point)
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-imgDemo::~imgDemo() {
+imgDemo::~imgDemo()
+{
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

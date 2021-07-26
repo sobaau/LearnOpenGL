@@ -1,14 +1,11 @@
-#include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include "camera.h"
-
+#include <glm/gtc/matrix_transform.hpp>
 
 Camera::Camera(glm::vec3 position) : Position(position),
                                      Front(glm::vec3(0.0f, 0.0f, -1.0f)),
-                                     Up(glm::vec3(0,0,0)),
-                                     Right(glm::vec3(0,0,0)),
-                                     WorldUp(glm::vec3(0.0f,1.0f,0.0f)),
+                                     Up(glm::vec3(0, 0, 0)),
+                                     Right(glm::vec3(0, 0, 0)),
+                                     WorldUp(glm::vec3(0.0f, 1.0f, 0.0f)),
                                      Yaw(YAW),
                                      Pitch(PITCH),
                                      MovementSpeed(SPEED),
@@ -19,17 +16,16 @@ Camera::Camera(glm::vec3 position) : Position(position),
     updateCameraVectors();
 }
 
-Camera::Camera(float posX, float posY, float posZ,
-               float upX, float upY, float upZ,
-               float yaw, float pitch) : Position(glm::vec3(posX, posY, posZ)),
-                                         Front(glm::vec3(0.0f, 0.0f, -1.0f)),
-                                         Up(glm::vec3(0,0,0)),
-                                         Right(glm::vec3(0,0,0)),
-                                         WorldUp(glm::vec3(upX, upY, upZ)),
-                                         Yaw(yaw),
-                                         Pitch(pitch),MovementSpeed(SPEED),
-                                         MouseSensitivity(SENSITIVITY),
-                                         Zoom(ZOOM)
+Camera::Camera(float posX, float posY, float posZ, float upX,
+               float upY, float upZ, float yaw, float pitch) : Position(glm::vec3(posX, posY, posZ)),
+                                                               Front(glm::vec3(0.0f, 0.0f, -1.0f)),
+                                                               Up(glm::vec3(0, 0, 0)),
+                                                               Right(glm::vec3(0, 0, 0)),
+                                                               WorldUp(glm::vec3(upX, upY, upZ)),
+                                                               Yaw(yaw),
+                                                               Pitch(pitch), MovementSpeed(SPEED),
+                                                               MouseSensitivity(SENSITIVITY),
+                                                               Zoom(ZOOM)
 {
     updateCameraVectors();
 }
@@ -92,6 +88,6 @@ void Camera::updateCameraVectors()
     Front = glm::normalize(front);
     // also re-calculate the Right and Up vector
     Right = glm::normalize(glm::cross(Front,
-                                      WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+                                      WorldUp)); // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
     Up = glm::normalize(glm::cross(Right, Front));
 }

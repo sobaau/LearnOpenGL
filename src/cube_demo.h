@@ -1,16 +1,17 @@
 #pragma once
+#include "shader.h"
 #include <array>
-#include <vector>
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
-#include "shader.h"
+#include <vector>
 class Camera;
 
-class cubeDemo {
+class cubeDemo
+{
     unsigned int VBO, cubeVAO;
     unsigned int lightCubeVAO;
     const std::array<float, 288> vertices;
-    std::array<glm::vec3,10> cubePositions;
+    std::array<glm::vec3, 10> cubePositions;
     Shader lightCubeShader;
     Shader lightingShader;
 

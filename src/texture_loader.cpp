@@ -1,19 +1,18 @@
-
-#include <stb_image.h>
-#include <iostream>
-#include <string>
-#include <glad/glad.h>
+#define STB_IMAGE_IMPLEMENTATION
 #include "texture_loader.h"
+#include <glad/glad.h>
+#include <iostream>
+#include <stb_image.h>
+#include <string>
 
-unsigned int loadTexture(char const *path)
+unsigned int loadTexture(std::string_view path)
 {
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
     int width, height, nrComponents;
-    unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
-    if (data)
-    {
+    unsigned char *data = stbi_load(path.data(), &width, &height, &nrComponents, 0);
+    if (data) {
         GLenum format = 0;
         if (nrComponents == 1)
             format = GL_RED;
@@ -34,9 +33,7 @@ unsigned int loadTexture(char const *path)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         stbi_image_free(data);
-    }
-    else
-    {
+    } else {
         std::cout << "Texture failed to load at path: " << path << std::endl;
         stbi_image_free(data);
     }
@@ -44,9 +41,8 @@ unsigned int loadTexture(char const *path)
     return textureID;
 }
 
-unsigned int TextureFromFile(const char *path, const std::string &directory)
+unsigned int TextureFromFile(std::string filename, std::string const &directory)
 {
-    std::string filename = std::string(path);
     filename = directory + '/' + filename;
 
     unsigned int textureID;
@@ -54,8 +50,7 @@ unsigned int TextureFromFile(const char *path, const std::string &directory)
 
     int width, height, nrComponents;
     unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
-    if (data)
-    {
+    if (data) {
         GLenum format = 0;
         if (nrComponents == 1)
             format = GL_RED;
@@ -66,7 +61,7 @@ unsigned int TextureFromFile(const char *path, const std::string &directory)
 
         glBindTexture(GL_TEXTURE_2D, textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);  
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
         glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -76,10 +71,8 @@ unsigned int TextureFromFile(const char *path, const std::string &directory)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         stbi_image_free(data);
-    }
-    else
-    {
-        std::cout << "Texture failed to load at path: " << path << std::endl;
+    } else {
+        std::cout << "Texture failed to load at path: " << filename << std::endl;
         stbi_image_free(data);
     }
 
@@ -92,18 +85,13 @@ unsigned int loadCubemap(std::vector<std::string> &faces)
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
     int width, height, nrChannels;
-    for (unsigned int i = 0; i < faces.size(); i++)
-    {
+    for (unsigned int i = 0; i < faces.size(); i++) {
         unsigned char *data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
-        if (data)
-        {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 
-                         0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
-            );
+        if (data) {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                         0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);
-        }
-        else
-        {
+        } else {
             std::cout << "Cubemap tex failed to load at path: " << faces[i] << std::endl;
             stbi_image_free(data);
         }
@@ -115,4 +103,4 @@ unsigned int loadCubemap(std::vector<std::string> &faces)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     return textureID;
-}  
+}

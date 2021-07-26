@@ -1,12 +1,11 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <vector>
 #include <glm/vec3.hpp>
-#define STB_IMAGE_IMPLEMENTATION
+#include <vector>
+
 class Grass;
 class Model;
 class Shader;
