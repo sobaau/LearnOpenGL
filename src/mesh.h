@@ -1,16 +1,16 @@
 #ifndef MESH_H_
 #define MESH_H_
 
-
-#include <iosfwd>                     // for string
-#include <string>                     // for basic_string
-#include <vector>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
+#include <iosfwd> // for string
+#include <string> // for basic_string
+#include <vector>
 class Shader;
 
-struct Vertex {
+struct Vertex
+{
     // position
     glm::vec3 Position;
     // normal
@@ -23,18 +23,20 @@ struct Vertex {
     glm::vec3 Bitangent;
 };
 
-struct Texture {
+struct Texture
+{
     unsigned int id;
     std::string type;
     std::string path;
 };
 
-class Mesh {
+class Mesh
+{
 public:
     // mesh Data
-    std::vector<Vertex>       vertices;
+    std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<Texture>      textures;
+    std::vector<Texture> textures;
     unsigned int VAO;
 
     // constructor
@@ -42,8 +44,9 @@ public:
 
     // render the mesh
     void Draw(Shader &shader);
+
 private:
-    // render data 
+    // render data
     unsigned int VBO, EBO;
 
     // initializes all the buffer objects/arrays

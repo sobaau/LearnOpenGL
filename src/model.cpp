@@ -1,13 +1,13 @@
 #include "model.h"
-#include <cstring>                   // for strcmp
-#include <iostream>                   // for cout
-#include "assimp/Importer.hpp"        // for Importer
-#include "assimp/mesh.h"              // for aiMesh, aiFace
-#include "assimp/postprocess.h"       // for aiProcess_CalcTangentSpace, aiP...
-#include "assimp/scene.h"             // for aiScene, aiNode, AI_SCENE_FLAGS...
-#include "assimp/types.h"             // for aiString
+#include "assimp/Importer.hpp"  // for Importer
+#include "assimp/mesh.h"        // for aiMesh, aiFace
+#include "assimp/postprocess.h" // for aiProcess_CalcTangentSpace, aiP...
+#include "assimp/scene.h"       // for aiScene, aiNode, AI_SCENE_FLAGS...
+#include "assimp/types.h"       // for aiString
+#include "texture_loader.h"     // for TextureFromFile
+#include <cstring>              // for strcmp
 #include <glm/vec3.hpp>
-#include "texture_loader.h"           // for TextureFromFile
+#include <iostream> // for cout
 class Shader;
 
 // constructor, expects a filepath to a 3D model.
@@ -30,7 +30,7 @@ void Model::loadModel(std::string const &path)
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(path,
                                              aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs |
-                                             aiProcess_CalcTangentSpace);
+                                                 aiProcess_CalcTangentSpace);
     // check for errors
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
     {
@@ -71,7 +71,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         vector.x = mesh->mVertices[i].x;
         vector.y = mesh->mVertices[i].y;
         vector.z = mesh->mVertices[i].z;
-        Vertex vertex {vector};
+        Vertex vertex{vector};
         // normals
         if (mesh->HasNormals()) {
             vector.x = mesh->mNormals[i].x;
@@ -140,8 +140,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 
 // checks all material textures of a given type and loads the textures if they're not loaded yet.
 // the required info is returned as a Texture struct.
- std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string const
-&typeName)
+std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string const &typeName)
 {
     std::vector<Texture> textures;
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
@@ -163,7 +162,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
             texture.path = str.C_Str();
             textures.push_back(texture);
             textures_loaded.push_back(
-                    texture); // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
+                texture); // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
         }
     }
     return textures;

@@ -1,11 +1,11 @@
 #include "grass.h"
-#include <iterator>
-#include <type_traits>
-#include <glad/glad.h>
-#include <glm/vec3.hpp>
-#include <glm/ext/matrix_transform.hpp>
-#include <string>
 #include "texture_loader.h"
+#include <glad/glad.h>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/vec3.hpp>
+#include <iterator>
+#include <string>
+#include <type_traits>
 
 Grass::Grass(std::vector<glm::vec3> loc) : transparentVertices({// positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
                                                                 0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
@@ -15,7 +15,7 @@ Grass::Grass(std::vector<glm::vec3> loc) : transparentVertices({// positions    
                                                                 0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
                                                                 1.0f, -0.5f, 0.0f, 1.0f, 1.0f,
                                                                 1.0f, 0.5f, 0.0f, 1.0f, 0.0f}),
-                                           grassShader{"shaders/grass.vert", "shaders/grass.frag"},
+                                           grassShader("shaders/grass.vert", "shaders/grass.frag"),
                                            grassTexture(loadTexture("textures/grass.png")),
                                            locations(std::move(loc))
 {
@@ -51,13 +51,11 @@ void Grass::Draw(glm::mat4 projection, glm::mat4 view, glm::vec3 cameraPos)
     grassShader.use();
     grassShader.setMat4("projection", projection);
     grassShader.setMat4("view", view);
-    for (auto & location : locations)
-    {
+    for (auto &location : locations) {
         float distance = glm::length(cameraPos - location);
         sorted[distance] = location;
     }
-    for (auto it = sorted.rbegin(); it != sorted.rend(); ++it)
-    {
+    for (auto it = sorted.rbegin(); it != sorted.rend(); ++it) {
         auto model = glm::mat4(1.0f);
         model = glm::translate(model, it->second);
         grassShader.setMat4("model", model);

@@ -1,20 +1,20 @@
 #ifndef MODEL_H_
 #define MODEL_H_
 
-
-#include <fstream>            // for string
-#include <vector>             // for vector
-#include <assimp/material.h>  // for aiMaterial (ptr only), aiTextureType
-#include "mesh.h"             // for Mesh, Texture
+#include "mesh.h"            // for Mesh, Texture
+#include <assimp/material.h> // for aiMaterial (ptr only), aiTextureType
+#include <fstream>           // for string
+#include <vector>            // for vector
 class Shader;
 struct aiMesh;
 struct aiNode;
 struct aiScene;
 
-class Model {
+class Model
+{
 public:
-    // model data 
-    std::vector<Texture> textures_loaded;    // stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
+    // model data
+    std::vector<Texture> textures_loaded; // stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     std::vector<Mesh> meshes;
     std::string directory;
     bool gamma;
@@ -39,6 +39,5 @@ private:
     // the required info is returned as a Texture struct.
     std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string const &typeName);
 };
-
 
 #endif // MODEL_H_

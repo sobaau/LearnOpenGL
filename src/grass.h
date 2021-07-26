@@ -1,12 +1,12 @@
 #ifndef GRASS_H_
 #define GRASS_H_
 
+#include "shader.h"
 #include <array>
-#include <map>
-#include <vector>
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
-#include "shader.h"
+#include <map>
+#include <vector>
 class Grass
 {
     std::array<float, 30> transparentVertices;
