@@ -1,7 +1,7 @@
 #include "camera.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-Camera::Camera(glm::vec3 position) : Position(position),
+Camera::Camera(glm::vec3 position) noexcept : Position(position),
                                      Front(glm::vec3(0.0f, 0.0f, -1.0f)),
                                      Up(glm::vec3(0, 0, 0)),
                                      Right(glm::vec3(0, 0, 0)),
@@ -10,7 +10,7 @@ Camera::Camera(glm::vec3 position) : Position(position),
                                      Pitch(PITCH),
                                      MovementSpeed(SPEED),
                                      MouseSensitivity(SENSITIVITY),
-                                     Zoom(ZOOM)
+                                     Zoom(ZOOM) 
 {
 
     updateCameraVectors();

@@ -26,9 +26,10 @@ file(GLOB_RECURSE HEADER_FILES
 	${CMAKE_SOURCE_DIR}/src/*.h
 	${CMAKE_SOURCE_DIR}/src/*.hpp)
 
+
 add_executable(LearnOpenGL ${SOURCE_FILES} ${HEADER_FILES})
 
-target_include_directories(LearnOpenGL PUBLIC 
+target_include_directories(LearnOpenGL SYSTEM PRIVATE
 ${CMAKE_CURRENT_SOURCE_DIR}/include
 ${CMAKE_SOURCE_DIR}/dependencies/glfw/include
 ${CMAKE_SOURCE_DIR}/dependencies/assimp/include
@@ -40,14 +41,14 @@ ${CMAKE_SOURCE_DIR}/dependencies/glad/include
 )
 
 if(APPLE)
-    target_link_libraries(LearnOpenGL PUBLIC "${OPENGL_LIBRARY}" "${IOKIT_LIBRARY}" "${COCOA_LIBRARY}")
+    target_link_libraries(LearnOpenGL PRIVATE "${OPENGL_LIBRARY}" "${IOKIT_LIBRARY}" "${COCOA_LIBRARY}")
 endif()
 
 if(WIN32)
-    target_link_libraries(LearnOpenGL PUBLIC OpenGL::GL User32.lib Gdi32.lib Shell32.lib kernel32.lib)
+    target_link_libraries(LearnOpenGL PRIVATE OpenGL::GL User32.lib Gdi32.lib Shell32.lib kernel32.lib)
 endif()
 
-target_link_libraries(LearnOpenGL PUBLIC glfw assimp imgui glm glad)
+target_link_libraries(LearnOpenGL PRIVATE glfw assimp imgui glm glad)
 
 if(MOVE_ASSETS)
     add_custom_command(TARGET LearnOpenGL POST_BUILD
@@ -62,5 +63,5 @@ if(MOVE_ASSETS)
 endif()
 
 if(USE_PCH)
-    target_precompile_headers(LearnOpenGL PUBLIC ${HEADER_FILES})
+    target_precompile_headers(LearnOpenGL PRIVATE ${HEADER_FILES})
 endif()

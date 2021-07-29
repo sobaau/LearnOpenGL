@@ -27,7 +27,7 @@ endif()
 option(LWYU "Link What You Use" OFF)
 option(ICWYU "Include What You Use" OFF)
 option(CPPCHECK "Use CPPCHECK" OFF)
-option(CLANGTIDY "Use Clang-Tidy" ON)
+option(CLANGTIDY "Use Clang-Tidy" OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 set(CMAKE_BUILD_PARALLEL_LEVEL 4)
@@ -57,12 +57,35 @@ if(LWYU)
     set(CMAKE_LINK_WHAT_YOU_USE TRUE)
 endif()
 
-if (MSVC)
-    add_compile_options(/W4 /EHsc)
-else()
-    add_compile_options(-Wall -pedantic)
-endif()
 #set( CMAKE_VERBOSE_MAKEFILE on )
+
+if (MSVC)
+add_compile_options(/W4 /EHsc)
+else()
+add_compile_options(
+    -Wall
+  -Wextra # reasonable and standard
+  -Wshadow # warn the user if a variable declaration shadows one from a
+           # parent context
+  -Wnon-virtual-dtor # warn the user if a class with virtual functions has a
+                     # non-virtual destructor. This helps catch hard to
+                     # track down memory errors
+  -Wold-style-cast # warn for c-style casts
+  -Wcast-align # warn for potential performance problem casts
+  -Wunused # warn on anything being unused
+  -Woverloaded-virtual # warn if you overload (not override) a virtual
+                       # function
+  -Wpedantic # warn if non-standard C++ is used
+  -Wconversion # warn on type conversions that may lose data
+  -Wsign-conversion # warn on sign conversions
+  -Wnull-dereference # warn if a null dereference is detected
+  -Wdouble-promotion # warn if float is implicit promoted to double
+  -Wformat=2 # warn on security issues around functions that format output
+             # (ie printf)
+#  -Wno-implicit-float-conversion
+  -Wno-unused-parameter
+)
+endif()
 
 if(ICWYU)
     find_program(iwyu_path REQUIRED NAMES include-what-you-use iwyu)

@@ -20,5 +20,5 @@ public:
     const unsigned int specularMap;
     cubeDemo();
     void cleanUp();
-    void Draw(Camera const &camera, const unsigned int &SCR_WIDTH, const unsigned int &SCR_HEIGHT, const glm::mat4 &projection, const glm::mat4 &view, const std::vector<glm::vec3> &pointLightPositions);
+    void Draw(Camera const &camera, const glm::mat4 &projection, const glm::mat4 &view, const std::vector<glm::vec3> &pointLightPositions);
 };

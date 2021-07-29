@@ -69,11 +69,11 @@ cubeDemo::cubeDemo() : vertices({// positions          // normals           // t
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
     glBindVertexArray(cubeVAO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<void *>(nullptr));
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void *>(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
     // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
@@ -82,7 +82,7 @@ cubeDemo::cubeDemo() : vertices({// positions          // normals           // t
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // note that we update the lamp's position attribute's stride to reflect the updated buffer data
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<void *>(nullptr));
     glEnableVertexAttribArray(0);
     glBindVertexArray(0);
     lightingShader.use();
@@ -90,7 +90,7 @@ cubeDemo::cubeDemo() : vertices({// positions          // normals           // t
     lightingShader.setInt("material.specular", 1);
 }
 
-void cubeDemo::Draw(Camera const &camera, const unsigned int &SCR_WIDTH, const unsigned int &SCR_HEIGHT, const glm::mat4 &projection, const glm::mat4 &view, const std::vector<glm::vec3> &pointLightPositions)
+void cubeDemo::Draw(Camera const &camera, const glm::mat4 &projection, const glm::mat4 &view, const std::vector<glm::vec3> &pointLightPositions)
 {
 
     // be sure to activate shader when setting uniforms/drawing objects
@@ -108,7 +108,7 @@ void cubeDemo::Draw(Camera const &camera, const unsigned int &SCR_WIDTH, const u
     lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
     lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
     lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-    for (auto i = 0; i < pointLightPositions.size(); i++) {
+    for (unsigned long i = 0; i < pointLightPositions.size(); i++) {
         lightingShader.setVec3("pointLights[" + std::to_string(i) + "].position", pointLightPositions[i]);
         lightingShader.setVec3("pointLights[" + std::to_string(i) + "].ambient", 0.05f, 0.05f, 0.05f);
         lightingShader.setVec3("pointLights[" + std::to_string(i) + "].diffuse", 0.8f, 0.8f, 0.8f);

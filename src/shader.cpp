@@ -11,11 +11,12 @@
 Shader::Shader(std::string_view vertexPath, std::string_view fragmentPath) : ID(glCreateProgram())
 {
     // 1. retrieve the vertex/fragment source code from filePath
-    auto vstringShader = loadShader(vertexPath);
-    auto fstringShader = loadShader(fragmentPath);
-    const char *vShaderCode = vstringShader.data();
-    const char *fShaderCode = fstringShader.data();
+    auto vShaderString = loadShader(vertexPath);
+    auto fShaderString = loadShader(fragmentPath);
 
+    const GLchar *vShaderCode = vShaderString.c_str();
+    const GLchar *fShaderCode = fShaderString.c_str();
+    
     // 2. compile shaders
     unsigned int vertex, fragment;
     // vertex shader
@@ -43,28 +44,29 @@ Shader::Shader(std::string_view vertexPath, std::string_view fragmentPath) : ID(
 Shader::Shader(std::string_view vertexPath, std::string_view geoPath, std::string_view fragmentPath) : ID(glCreateProgram())
 {
     // 1. retrieve the vertex/fragment source code from filePath
-    auto vstringShader = loadShader(vertexPath);
-    auto fstringShader = loadShader(fragmentPath);
-    auto gstringShader = loadShader(geoPath);
-    const char *vShaderCode = vstringShader.data();
-    const char *fShaderCode = fstringShader.data();
-    const char *gShaderCode = gstringShader.data();
+    auto vShaderString = loadShader(vertexPath);
+    auto fShaderString = loadShader(fragmentPath);
+    auto gShaderString = loadShader(geoPath);
+
+    const GLchar *vShaderCode = vShaderString.c_str();
+    const GLchar *fShaderCode = fShaderString.c_str();
+    const GLchar *gShaderCode = gShaderString.c_str();
 
     // 2. compile shaders
     unsigned int vertex, fragment, geometry;
     // vertex shader
     vertex = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex, 1, (const GLchar *const *)&vShaderCode, nullptr);
+    glShaderSource(vertex, 1, &vShaderCode, nullptr);
     glCompileShader(vertex);
     checkCompileErrors(vertex, "VERTEX");
     // fragment Shader
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment, 1, (const GLchar *const *)&fShaderCode, nullptr);
+    glShaderSource(fragment, 1, &fShaderCode, nullptr);
     glCompileShader(fragment);
     checkCompileErrors(fragment, "FRAGMENT");
     // geo Shader
     geometry = glCreateShader(GL_GEOMETRY_SHADER);
-    glShaderSource(geometry, 1, (const GLchar *const *)&gShaderCode, nullptr);
+    glShaderSource(geometry, 1, &gShaderCode, nullptr);
     glCompileShader(geometry);
     checkCompileErrors(geometry, "GEOMETRY");
     // shader Program
@@ -87,7 +89,7 @@ void Shader::use() const
 // utility uniform functions
 void Shader::setBool(const std::string &name, bool value) const
 {
-    glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
+    glUniform1i(glGetUniformLocation(ID, name.c_str()), static_cast<int>(value));
 }
 
 void Shader::setInt(const std::string &name, int value) const

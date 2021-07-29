@@ -38,7 +38,7 @@ public:
     float Zoom;
 
     // constructor with vectors
-    explicit Camera(glm::vec3 position);
+    explicit Camera(glm::vec3 position) noexcept;
     // constructor with scalar values
     Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
 

@@ -3,47 +3,48 @@
 #include "glad/glad.h" // for GL_ARRAY_BUFFER, GL_CULL_FACE
 #include <glm/ext/matrix_transform.hpp>
 #include <string>
-ReflCube::ReflCube() : reflShader("shaders/reflection.vert", "shaders/reflection.frag"), vertices({-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-                                                                                                   0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-                                                                                                   0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-                                                                                                   0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-                                                                                                   -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-                                                                                                   -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+ReflCube::ReflCube() : vertices({-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+                                 0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+                                 0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+                                 0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+                                 -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+                                 -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
 
-                                                                                                   -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-                                                                                                   0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-                                                                                                   0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-                                                                                                   0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-                                                                                                   -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-                                                                                                   -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+                                 -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+                                 0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+                                 0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+                                 0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+                                 -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+                                 -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
 
-                                                                                                   -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
-                                                                                                   -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-                                                                                                   -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-                                                                                                   -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-                                                                                                   -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
-                                                                                                   -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+                                 -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+                                 -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+                                 -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+                                 -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+                                 -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+                                 -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
 
-                                                                                                   0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
-                                                                                                   0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-                                                                                                   0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-                                                                                                   0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-                                                                                                   0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
-                                                                                                   0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+                                 0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+                                 0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+                                 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+                                 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+                                 0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+                                 0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
 
-                                                                                                   -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
-                                                                                                   0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
-                                                                                                   0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
-                                                                                                   0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
-                                                                                                   -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
-                                                                                                   -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+                                 -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+                                 0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+                                 0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+                                 0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+                                 -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+                                 -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
 
-                                                                                                   -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-                                                                                                   0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-                                                                                                   0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-                                                                                                   0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-                                                                                                   -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-                                                                                                   -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f})
+                                 -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+                                 0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+                                 0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+                                 0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+                                 -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+                                 -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f}),
+                       reflShader("shaders/reflection.vert", "shaders/reflection.frag")
 {
     glGenVertexArrays(1, &RVAO);
     glGenBuffers(1, &RVBO);
@@ -51,9 +52,9 @@ ReflCube::ReflCube() : reflShader("shaders/reflection.vert", "shaders/reflection
     glBindBuffer(GL_ARRAY_BUFFER, RVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), static_cast<void *>(nullptr));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
     reflShader.use();
     reflShader.setInt("skybox", 0);
 }
