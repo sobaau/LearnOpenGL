@@ -2,19 +2,17 @@
 #define GRASS_H_
 
 #include "shader.h"
-#include <array>
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 #include <map>
 #include <vector>
 class Grass
 {
-    std::array<float, 30> transparentVertices;
+    std::vector<float> transparentVertices;
     Shader grassShader;
     unsigned int grassTexture;
     std::map<float, glm::vec3> sorted;
-    unsigned int grassVAO;
-    unsigned int grassVBO;
+    unsigned int grassVAO, grassVBO;
 
 public:
     std::vector<glm::vec3> locations;

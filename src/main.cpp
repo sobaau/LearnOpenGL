@@ -13,21 +13,17 @@
 #include <iostream>
 #include <string>
 
-// settings
-int SCR_WIDTH = 1280.0f;
-int SCR_HEIGHT = 720.0f;
-
-// camera
-auto lastX = static_cast<double> (SCR_WIDTH / 2.0);
-auto lastY = static_cast<double>(SCR_HEIGHT / 2.0);
-auto firstMouse = true;
-// timing
-auto deltaTime = 0.0f; // time between current frame and last frame
-auto lastFrame = 0.0f;
-
-static Camera camera(glm::vec3(0.0f, 0.0f, 0.0f)); //NOLINT(cert-err58-cpp)
-
-
+static GlobalSettings globalSettings{
+    // settings
+    1280,
+    720,
+    static_cast<double>(1280 / 2.0),
+    static_cast<double>(720 / 2.0),
+    true,
+    // timing
+    0.0f, // time between current frame and last frame
+    0.0f};
+static Camera camera(glm::vec3(0.0f, 0.0f, 0.0f)); //NOLINT
 int main()
 {
     // glfw: initialize and configure
@@ -43,7 +39,7 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(globalSettings.SCR_WIDTH, globalSettings.SCR_HEIGHT, "LearnOpenGL", nullptr, nullptr);
     if (window == nullptr) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -92,38 +88,38 @@ int main()
         glm::vec3(0.0f, 0.0f, 0.7f),
         glm::vec3(-0.3f, 0.0f, -2.3f),
         glm::vec3(0.5f, 0.0f, -0.6f)};
-    float points[] = {
+    std::vector<float> points = {
         -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, // top-left
         0.5f, 0.5f, 0.0f, 1.0f, 0.0f,  // top-right
         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // bottom-right
         -0.5f, -0.5f, 1.0f, 1.0f, 0.0f // bottom-left
     };
     //Framebuffer framebuff = initFrameBuffer();
-    unsigned int GVBO, GVAO;
+    unsigned int GVBO{0};
+    unsigned int GVAO{0};
     glGenVertexArrays(1, &GVAO);
     glGenBuffers(1, &GVBO);
     glBindBuffer(GL_ARRAY_BUFFER, GVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(points.size() * sizeof(float)), &points.front(), GL_STATIC_DRAW);
     glBindVertexArray(GVAO);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), static_cast<void *>(nullptr));
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void *>(2 * sizeof(float)));
-
     glBindVertexArray(0);
 
     Grass grass(grassLocations);
     cubeDemo cubes;
     SkyBox skyBox;
-    ReflCube reflCube; 
+    ReflCube reflCube;
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while (!glfwWindowShouldClose(window)) {
         // per-frame time logic
         // --------------------
         auto currentFrame = static_cast<float>(glfwGetTime());
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        globalSettings.deltaTime = currentFrame - globalSettings.lastFrame;
+        globalSettings.lastFrame = currentFrame;
         // input
         // -----
         processInput(window);
@@ -134,7 +130,7 @@ int main()
         // clear all relevant buffers
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
         //glClear(GL_COLOR_BUFFER_BIT);
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(SCR_WIDTH) / static_cast<float>(SCR_HEIGHT), 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(globalSettings.SCR_WIDTH) / static_cast<float>(globalSettings.SCR_HEIGHT), 0.1f, 100.0f);
         auto view = camera.GetViewMatrix();
 
         cubes.Draw(camera, projection, view, pointLightPositions);
@@ -216,16 +212,21 @@ void renderLights(Shader &shader, std::vector<glm::vec3> &pointLightPositions)
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window)
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
+    }
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        camera.ProcessKeyboard(FORWARD, globalSettings.deltaTime);
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        camera.ProcessKeyboard(BACKWARD, globalSettings.deltaTime);
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        camera.ProcessKeyboard(LEFT, globalSettings.deltaTime);
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        camera.ProcessKeyboard(RIGHT, globalSettings.deltaTime);
+    }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -239,17 +240,17 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 
 void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 {
-    if (firstMouse) {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
+    if (globalSettings.firstMouse) {
+        globalSettings.lastX = xpos;
+        globalSettings.lastY = ypos;
+        globalSettings.firstMouse = false;
     }
 
-    auto xoffset = static_cast<float>(xpos - lastX);
-    auto yoffset = static_cast<float>(lastY - ypos); // reversed since y-coordinates go from bottom to top
+    auto xoffset = static_cast<float>(xpos - globalSettings.lastX);
+    auto yoffset = static_cast<float>(globalSettings.lastY - ypos); // reversed since y-coordinates go from bottom to top
 
-    lastX = xpos;
-    lastY = ypos;
+    globalSettings.lastX = xpos;
+    globalSettings.lastY = ypos;
 
     camera.ProcessMouseMovement(xoffset, yoffset, true);
 }

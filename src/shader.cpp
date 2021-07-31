@@ -16,16 +16,15 @@ Shader::Shader(std::string_view vertexPath, std::string_view fragmentPath) : ID(
 
     const GLchar *vShaderCode = vShaderString.c_str();
     const GLchar *fShaderCode = fShaderString.c_str();
-    
+
     // 2. compile shaders
-    unsigned int vertex, fragment;
     // vertex shader
-    vertex = glCreateShader(GL_VERTEX_SHADER);
+    auto vertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, nullptr);
     glCompileShader(vertex);
     checkCompileErrors(vertex, "VERTEX");
     // fragment Shader
-    fragment = glCreateShader(GL_FRAGMENT_SHADER);
+    auto fragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fShaderCode, nullptr);
     glCompileShader(fragment);
     checkCompileErrors(fragment, "FRAGMENT");
@@ -41,7 +40,10 @@ Shader::Shader(std::string_view vertexPath, std::string_view fragmentPath) : ID(
     glDeleteShader(fragment);
 }
 
-Shader::Shader(std::string_view vertexPath, std::string_view geoPath, std::string_view fragmentPath) : ID(glCreateProgram())
+Shader::Shader(std::string_view vertexPath,
+               std::string_view geoPath,
+               std::string_view fragmentPath)
+    : ID(glCreateProgram())
 {
     // 1. retrieve the vertex/fragment source code from filePath
     auto vShaderString = loadShader(vertexPath);
@@ -53,19 +55,18 @@ Shader::Shader(std::string_view vertexPath, std::string_view geoPath, std::strin
     const GLchar *gShaderCode = gShaderString.c_str();
 
     // 2. compile shaders
-    unsigned int vertex, fragment, geometry;
     // vertex shader
-    vertex = glCreateShader(GL_VERTEX_SHADER);
+    auto vertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, nullptr);
     glCompileShader(vertex);
     checkCompileErrors(vertex, "VERTEX");
     // fragment Shader
-    fragment = glCreateShader(GL_FRAGMENT_SHADER);
+    auto fragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fShaderCode, nullptr);
     glCompileShader(fragment);
     checkCompileErrors(fragment, "FRAGMENT");
     // geo Shader
-    geometry = glCreateShader(GL_GEOMETRY_SHADER);
+    auto geometry = glCreateShader(GL_GEOMETRY_SHADER);
     glShaderSource(geometry, 1, &gShaderCode, nullptr);
     glCompileShader(geometry);
     checkCompileErrors(geometry, "GEOMETRY");
@@ -156,12 +157,14 @@ void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const
 
 void Shader::checkCompileErrors(unsigned int shader, std::string_view type)
 {
-    int success;
-    char infoLog[1024];
+    auto success = 0;
+    std::string infoLog;
+    constexpr auto logSize = 1024;
+    infoLog.resize(logSize);
     if (type != "PROGRAM") {
         glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-        if (!success) {
-            glGetShaderInfoLog(shader, 1024, nullptr, infoLog);
+        if (success == 0) {
+            glGetShaderInfoLog(shader, logSize, nullptr, &infoLog[0]);
             std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n"
                       << infoLog
                       << "\n -- --------------------------------------------------- "
@@ -170,8 +173,8 @@ void Shader::checkCompileErrors(unsigned int shader, std::string_view type)
         }
     } else {
         glGetProgramiv(shader, GL_LINK_STATUS, &success);
-        if (!success) {
-            glGetProgramInfoLog(shader, 1024, nullptr, infoLog);
+        if (success == 0) {
+            glGetProgramInfoLog(shader, logSize, nullptr, &infoLog[0]);
             std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n"
                       << infoLog
                       << "\n -- --------------------------------------------------- "

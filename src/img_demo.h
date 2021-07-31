@@ -17,6 +17,6 @@ class imgDemo
 
 public:
     explicit imgDemo(GLFWwindow *window);
-    ~imgDemo();
+    void shutdown();
     void draw(glm::vec3 *point);
 };

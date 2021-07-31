@@ -5,25 +5,28 @@
 #include <stb_image.h>
 #include <string>
 
-unsigned int loadTexture(std::string_view path)
+auto loadTexture(std::string_view path) -> unsigned int
 {
-    unsigned int textureID;
+    unsigned int textureID = 0;
     glGenTextures(1, &textureID);
 
-    int width, height, nrComponents;
+    auto width = 0;
+    auto height = 0;
+    auto nrComponents = 0;
     unsigned char *data = stbi_load(path.data(), &width, &height, &nrComponents, 0);
     if (data) {
         GLenum format = 0;
-        if (nrComponents == 1)
+        if (nrComponents == 1) {
             format = GL_RED;
-        else if (nrComponents == 3)
+        } else if (nrComponents == 3) {
             format = GL_RGB;
-        else if (nrComponents == 4)
+        } else if (nrComponents == 4) {
             format = GL_RGBA;
+        }
 
         glBindTexture(GL_TEXTURE_2D, textureID);
-        //glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, static_cast<int>(format), width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
         glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -45,19 +48,22 @@ unsigned int TextureFromFile(std::string filename, std::string const &directory)
 {
     filename = directory + '/' + filename;
 
-    unsigned int textureID;
+    unsigned int textureID = 0;
     glGenTextures(1, &textureID);
 
-    int width, height, nrComponents;
+    auto width = 0;
+    auto height = 0;
+    auto nrComponents = 0;
     unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
     if (data) {
         GLenum format = 0;
-        if (nrComponents == 1)
+        if (nrComponents == 1) {
             format = GL_RED;
-        else if (nrComponents == 3)
+        } else if (nrComponents == 3) {
             format = GL_RGB;
-        else if (nrComponents == 4)
+        } else if (nrComponents == 4) {
             format = GL_RGBA;
+        }
 
         glBindTexture(GL_TEXTURE_2D, textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, static_cast<int>(format), width, height, 0, format, GL_UNSIGNED_BYTE, data);
@@ -80,14 +86,16 @@ unsigned int TextureFromFile(std::string filename, std::string const &directory)
 }
 unsigned int loadCubemap(std::vector<std::string> &faces)
 {
-    unsigned int textureID;
+    unsigned int textureID = 0;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
-    int width, height, nrChannels;
+    auto width = 0;
+    auto height = 0;
+    auto nrChannels = 0;
     for (unsigned int i = 0; i < faces.size(); i++) {
         unsigned char *data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
-        if (data) {
+        if (sizeof(data) != 0) {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                          0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);

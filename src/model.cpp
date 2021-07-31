@@ -19,8 +19,9 @@ Model::Model(std::string const &path) : gamma(false), gammaCorrection(gamma)
 // draws the model, and thus all its meshes
 void Model::Draw(Shader &shader)
 {
-    for (auto &mesh : meshes)
+    for (auto &mesh : meshes){
         mesh.Draw(shader);
+    }
 }
 
 // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
@@ -70,7 +71,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         // positions
         vector.x = mesh->mVertices[i].x;
         vector.y = mesh->mVertices[i].y;
-        vector.z = mesh->mVertices[i].z;
+        vector.z = mesh->mVertices[i].z; 
         Vertex vertex{vector,vector,vector,vector,vector};
         // normals
         if (mesh->HasNormals()) {
@@ -98,8 +99,9 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
             vector.y = mesh->mBitangents[i].y;
             vector.z = mesh->mBitangents[i].z;
             vertex.Bitangent = vector;
-        } else
+        } else{
             vertex.TexCoords = glm::vec2(0.0f, 0.0f);
+        }
 
         vertices.push_back(vertex);
     }
@@ -108,8 +110,9 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
     for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
         aiFace face = mesh->mFaces[i];
         // retrieve all indices of the face and store them in the indices vector
-        for (unsigned int j = 0; j < face.mNumIndices; j++)
+        for (unsigned int j = 0; j < face.mNumIndices; j++){
             indices.push_back(face.mIndices[j]);
+        }
     }
     // process materials
     aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
@@ -156,10 +159,11 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
             }
         }
         if (!skip) { // if texture hasn't been loaded already, load it
-            Texture texture;
-            texture.id = TextureFromFile(str.C_Str(), this->directory);
-            texture.type = typeName;
-            texture.path = str.C_Str();
+            Texture texture{
+            TextureFromFile(str.C_Str(), this->directory),
+            typeName,
+            str.C_Str(),
+            };
             textures.push_back(texture);
             textures_loaded.push_back(
                 texture); // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.

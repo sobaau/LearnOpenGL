@@ -39,14 +39,18 @@ glm::mat4 Camera::GetViewMatrix() const
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 {
     float velocity = MovementSpeed * deltaTime;
-    if (direction == FORWARD)
+    if (direction == FORWARD){
         Position += Front * velocity;
-    if (direction == BACKWARD)
+    }
+    if (direction == BACKWARD){
         Position -= Front * velocity;
-    if (direction == LEFT)
+    }
+    if (direction == LEFT){
         Position -= Right * velocity;
-    if (direction == RIGHT)
+    }
+    if (direction == RIGHT){
         Position += Right * velocity;
+    }
     //Position.y = 0.0f; // <-- this one-liner keeps the user at the ground level (xz plane)
 }
 
@@ -59,10 +63,12 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
 
     // make sure that when pitch is out of bounds, screen doesn't get flipped
     if (constrainPitch) {
-        if (Pitch > 89.0f)
+        if (Pitch > 89.0f){
             Pitch = 89.0f;
-        if (Pitch < -89.0f)
+        }
+        if (Pitch < -89.0f){
             Pitch = -89.0f;
+        }
     }
 
     // update Front, Right and Up Vectors using the updated Euler angles
@@ -72,10 +78,12 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
 void Camera::ProcessMouseScroll(float yoffset)
 {
     Zoom -= yoffset;
-    if (Zoom < 1.0f)
+    if (Zoom < 1.0f){
         Zoom = 1.0f;
-    if (Zoom > 45.0f)
+    }
+    if (Zoom > 45.0f){
         Zoom = 45.0f;
+    }
 }
 
 void Camera::updateCameraVectors()

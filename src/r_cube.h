@@ -3,14 +3,15 @@
 
 #include "shader.h"       // for Shader
 #include <glm/mat4x4.hpp>
-#include <array>
+#include <vector>
 class Camera;
 
 class ReflCube
 {
-    std::array<float, 216> vertices;
-    unsigned int RVAO, RVBO;
+    std::vector<float> vertices;
     Shader reflShader;
+    unsigned int RVAO;
+    unsigned int RVBO;
 
 public:
     ReflCube();

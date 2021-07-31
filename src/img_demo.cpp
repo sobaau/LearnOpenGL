@@ -65,7 +65,7 @@ void imgDemo::draw(glm::vec3 *point)
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-imgDemo::~imgDemo()
+void imgDemo::shutdown()
 {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();

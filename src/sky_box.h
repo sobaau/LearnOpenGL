@@ -10,14 +10,15 @@
 class SkyBox
 {
     std::vector<std::string> faces;
-    std::array<float, 108> skyboxVertices;
+    std::vector<float> skyboxVertices;
     Shader skyBoxShader;
-    unsigned int skyboxVAO, skyboxVBO;
+    unsigned int skyboxVAO; 
+    unsigned int skyboxVBO;
 
 public:
     SkyBox();
-    unsigned int skyTexture;
     void draw(glm::mat4 &view, glm::mat4 &projection);
+    unsigned int skyTexture;
 };
 
 #endif // SKY_BOX_H_

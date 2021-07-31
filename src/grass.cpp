@@ -7,23 +7,26 @@
 #include <string>
 #include <type_traits>
 
-Grass::Grass(std::vector<glm::vec3> loc) : transparentVertices({// positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
-                                                                0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
-                                                                0.0f, -0.5f, 0.0f, 0.0f, 1.0f,
-                                                                1.0f, -0.5f, 0.0f, 1.0f, 1.0f,
+Grass::Grass(std::vector<glm::vec3> loc)
+    : transparentVertices({// positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
+                           0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+                           0.0f, -0.5f, 0.0f, 0.0f, 1.0f,
+                           1.0f, -0.5f, 0.0f, 1.0f, 1.0f,
 
-                                                                0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
-                                                                1.0f, -0.5f, 0.0f, 1.0f, 1.0f,
-                                                                1.0f, 0.5f, 0.0f, 1.0f, 0.0f}),
-                                           grassShader("shaders/grass.vert", "shaders/grass.frag"),
-                                           grassTexture(loadTexture("textures/grass.png")),
-                                           locations(std::move(loc))
+                           0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+                           1.0f, -0.5f, 0.0f, 1.0f, 1.0f,
+                           1.0f, 0.5f, 0.0f, 1.0f, 0.0f}),
+      grassShader("shaders/grass.vert", "shaders/grass.frag"),
+      grassTexture(loadTexture("textures/grass.png")),
+      grassVAO(0),
+      grassVBO(0),
+      locations(std::move(loc))
 {
     glGenVertexArrays(1, &grassVAO);
     glGenBuffers(1, &grassVBO);
     glBindVertexArray(grassVAO);
     glBindBuffer(GL_ARRAY_BUFFER, grassVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), transparentVertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(transparentVertices.size()*sizeof(float)), &transparentVertices.front(), GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), static_cast<void *>(nullptr));
     glEnableVertexAttribArray(1);

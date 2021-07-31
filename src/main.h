@@ -5,11 +5,20 @@
 #include <GLFW/glfw3.h>
 #include <glm/vec3.hpp>
 #include <vector>
-
 class Grass;
 class Model;
 class Shader;
 class cubeDemo;
+
+struct GlobalSettings {
+    int SCR_WIDTH;
+    int SCR_HEIGHT;
+    double lastX;
+    double lastY;
+    bool firstMouse;
+    float deltaTime;
+    float lastFrame;
+};
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);

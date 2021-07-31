@@ -1,6 +1,5 @@
 #pragma once
 #include "shader.h"
-#include <array>
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 #include <vector>
@@ -8,10 +7,11 @@ class Camera;
 
 class cubeDemo
 {
-    unsigned int VBO, cubeVAO;
+    unsigned int VBO;
+    unsigned int cubeVAO;
     unsigned int lightCubeVAO;
-    const std::array<float, 288> vertices;
-    std::array<glm::vec3, 10> cubePositions;
+    std::vector<float> vertices;
+    std::vector<glm::vec3> cubePositions;
     Shader lightCubeShader;
     Shader lightingShader;
 
