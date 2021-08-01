@@ -45,7 +45,9 @@ public:
 
 private:
     // render data
-    unsigned int VBO, EBO ,VAO;
+    unsigned int VBO{0};
+    unsigned int EBO{0};
+    unsigned int VAO{0};
 
     // initializes all the buffer objects/arrays
     void setupMesh();

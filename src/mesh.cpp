@@ -7,10 +7,7 @@
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
     : vertices(std::move(vertices)),
       indices(std::move(indices)),
-      textures(std::move(textures)), 
-      VBO(0),
-      EBO(0),
-      VAO(0)
+      textures(std::move(textures))
 {
     // now that we have all the required data, set the vertex buffers and its attribute pointers.
     setupMesh();

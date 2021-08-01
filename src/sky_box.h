@@ -12,8 +12,8 @@ class SkyBox
     std::vector<std::string> faces;
     std::vector<float> skyboxVertices;
     Shader skyBoxShader;
-    unsigned int skyboxVAO; 
-    unsigned int skyboxVBO;
+    unsigned int skyboxVAO{0}; 
+    unsigned int skyboxVBO{0};
 
 public:
     SkyBox();

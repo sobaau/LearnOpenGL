@@ -34,50 +34,7 @@ option(LWYU "Link What You Use" OFF)
 option(ICWYU "Include What You Use" OFF)
 option(CPPCHECK "Use CPPCHECK" OFF)
 option(CLANGTIDY "Use Clang-Tidy" ON)
-
-set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
-set(CMAKE_BUILD_PARALLEL_LEVEL 4)
-set(CMAKE_CXX_STANDARD
-    17
-    CACHE STRING "The C++ standard to use")
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_VISIBILITY_PRESET
-    hidden
-    CACHE STRING "Inline Visibility")
-set(GLFW_BUILD_DOCS
-    OFF
-    CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS
-    OFF
-    CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES
-    OFF
-    CACHE BOOL "" FORCE)
-set(GLFW_INSTALL
-    OFF
-    CACHE BOOL "" FORCE)
-set(ASSIMP_INSTALL
-    OFF
-    CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_ASSIMP_TOOLS
-    OFF
-    CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_TESTS
-    OFF
-    CACHE BOOL "" FORCE)
-set(ASSIMP_NO_EXPORT
-    ON
-    CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT
-    OFF
-    CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_OBJ_IMPORTER
-    ON
-    CACHE BOOL "" FORCE)
-set(INJECT_DEBUG_POSTFIX
-    OFF
-    CACHE BOOL "" FORCE)
+include(cmake/CmakeProjectSettings.cmake)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/glfw EXCLUDE_FROM_ALL)
 add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/assimp EXCLUDE_FROM_ALL)

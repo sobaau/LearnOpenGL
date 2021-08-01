@@ -7,10 +7,9 @@ class Camera;
 
 class cubeDemo
 {
-    unsigned int VBO;
-    unsigned int cubeVAO;
-    unsigned int lightCubeVAO;
-    std::vector<float> vertices;
+    unsigned int VBO{0};
+    unsigned int cubeVAO{0};
+    unsigned int lightCubeVAO{0};
     std::vector<glm::vec3> cubePositions;
     Shader lightCubeShader;
     Shader lightingShader;

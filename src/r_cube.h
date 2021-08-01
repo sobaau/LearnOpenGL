@@ -10,8 +10,8 @@ class ReflCube
 {
     std::vector<float> vertices;
     Shader reflShader;
-    unsigned int RVAO;
-    unsigned int RVBO;
+    unsigned int RVAO{0};
+    unsigned int RVBO{0};
 
 public:
     ReflCube();

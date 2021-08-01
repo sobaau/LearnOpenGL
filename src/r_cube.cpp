@@ -2,7 +2,6 @@
 #include "camera.h"    // for Camera
 #include "glad/glad.h" // for GL_ARRAY_BUFFER, GL_CULL_FACE
 #include <glm/ext/matrix_transform.hpp>
-#include <string>
 ReflCube::ReflCube()
     : vertices({-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
                 0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
@@ -45,9 +44,7 @@ ReflCube::ReflCube()
                 0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
                 -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
                 -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f}),
-      reflShader("shaders/reflection.vert", "shaders/reflection.frag"),
-      RVAO(0),
-      RVBO(0)
+      reflShader("shaders/reflection.vert", "shaders/reflection.frag")
 {
     glGenVertexArrays(1, &RVAO);
     glGenBuffers(1, &RVBO);

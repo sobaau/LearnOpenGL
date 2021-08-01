@@ -27,7 +27,7 @@ file(GLOB_RECURSE HEADER_FILES ${CMAKE_SOURCE_DIR}/src/*.h
 add_executable(OpenGLDemo ${SOURCE_FILES} ${HEADER_FILES})
 
 target_include_directories(
-    OpenGLDemo SYSTEM
+  OpenGLDemo SYSTEM
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
           ${CMAKE_SOURCE_DIR}/dependencies/glfw/include
           ${CMAKE_SOURCE_DIR}/dependencies/assimp/include
@@ -40,12 +40,12 @@ target_include_directories(
 if(APPLE)
   target_link_libraries(
     OpenGLDemo PRIVATE "${OPENGL_LIBRARY}" "${IOKIT_LIBRARY}"
-                        "${COCOA_LIBRARY}")
+                       "${COCOA_LIBRARY}")
 endif()
 
 if(WIN32)
   target_link_libraries(OpenGLDemo PRIVATE OpenGL::GL User32.lib Gdi32.lib
-                                            Shell32.lib kernel32.lib)
+                                           Shell32.lib kernel32.lib)
 endif()
 
 target_link_libraries(OpenGLDemo PRIVATE glfw assimp imgui glm glad)
@@ -54,19 +54,28 @@ if(MOVE_ASSETS)
   add_custom_command(
     TARGET OpenGLDemo
     POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/shaders/
-            $<TARGET_FILE_DIR:OpenGLDemo>/shaders/)
+    COMMAND rsync ARGS -r "${CMAKE_SOURCE_DIR}/src/shaders/"
+            "$<TARGET_FILE_DIR:OpenGLDemo>/shaders/")
   add_custom_command(
     TARGET OpenGLDemo
     POST_BUILD
-    COMMAND
-      ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/textures/
-      $<TARGET_FILE_DIR:OpenGLDemo>/textures/)
+    COMMAND rsync ARGS -r "${CMAKE_SOURCE_DIR}/src/textures/"
+            "$<TARGET_FILE_DIR:OpenGLDemo>/textures/")
   add_custom_command(
     TARGET OpenGLDemo
     POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/sponza/
-            $<TARGET_FILE_DIR:OpenGLDemo>/sponza/)
+    COMMAND rsync ARGS -r "${CMAKE_SOURCE_DIR}/src/sponza/"
+            "$<TARGET_FILE_DIR:OpenGLDemo>/sponza/")
+  add_custom_command(
+    TARGET OpenGLDemo
+    POST_BUILD
+    COMMAND rsync ARGS -r "${CMAKE_SOURCE_DIR}/src/rock/"
+            "$<TARGET_FILE_DIR:OpenGLDemo>/rock/")
+  add_custom_command(
+    TARGET OpenGLDemo
+    POST_BUILD
+    COMMAND rsync ARGS -r "${CMAKE_SOURCE_DIR}/src/planet/"
+            "$<TARGET_FILE_DIR:OpenGLDemo>/planet/")
 endif()
 
 if(USE_PCH)

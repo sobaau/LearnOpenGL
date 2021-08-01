@@ -1,7 +1,6 @@
 #include "sky_box.h"
 #include "texture_loader.h"
 #include <glad/glad.h>
-#include <string>
 
 SkyBox::SkyBox()
     : faces(
@@ -54,8 +53,6 @@ SkyBox::SkyBox()
                       -1.0f, -1.0f, 1.0f,
                       1.0f, -1.0f, 1.0f}),
       skyBoxShader("shaders/sky_box.vert", "shaders/sky_box.frag"),
-      skyboxVAO(0),
-      skyboxVBO(0),
       skyTexture(loadCubemap(faces))
 {
     glGenVertexArrays(1, &skyboxVAO);

@@ -68,3 +68,4 @@ lib/
 dependencies/assimp/revision.h
 **/cmake-build-*/
 !/src/**/*.obj
+CMakeLists.txt.user

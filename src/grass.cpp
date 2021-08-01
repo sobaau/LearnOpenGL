@@ -4,7 +4,6 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/vec3.hpp>
 #include <iterator>
-#include <string>
 #include <type_traits>
 
 Grass::Grass(std::vector<glm::vec3> loc)
