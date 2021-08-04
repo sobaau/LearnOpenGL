@@ -1,6 +1,6 @@
 #include "cube_demo.h"
 #include "camera.h" // for Camera
-#include "cubeSquared.h"
+#include "cube_layout.h"
 #include "texture_loader.h"
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -24,7 +24,7 @@ cubeDemo::cubeDemo()
       diffuseMap(loadTexture("textures/container2.png")),
       specularMap(loadTexture("textures/container2_specular.png"))
 {
-    CubeSquared cube;
+    cubeLayout cube;
     glGenVertexArrays(1, &cubeVAO);
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -46,7 +46,7 @@ cubeDemo::cubeDemo()
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // note that we update the lamp's position attribute's stride to reflect the updated buffer data
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<void *>(nullptr));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void *>(nullptr));
     glEnableVertexAttribArray(0);
     glBindVertexArray(0);
     lightingShader.use();

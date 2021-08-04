@@ -1,6 +1,6 @@
-#include "cubeSquared.h"
+#include "cube_layout.h"
 
-CubeSquared::CubeSquared() :
+cubeLayout::cubeLayout() :
                     vertices({
                         -0.5f, -0.5f, -0.5f,
                         0.5f, 0.5f, -0.5f,

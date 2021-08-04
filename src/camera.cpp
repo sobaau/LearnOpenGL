@@ -51,6 +51,9 @@ void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
     if (direction == RIGHT){
         Position += Right * velocity;
     }
+    if (direction == UP){
+        Position += Up * velocity;
+    }
     //Position.y = 0.0f; // <-- this one-liner keeps the user at the ground level (xz plane)
 }
 

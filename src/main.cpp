@@ -2,28 +2,27 @@
 #include "camera.h"
 #include "cube_demo.h"
 #include "grass.h"
-#include "img_demo.h"
+#include "debug_ui.h"
 #include "model.h"
 #include "r_cube.h"
 #include "shader.h"
 #include "sky_box.h"
-#include <cstddef>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
-
-static GlobalSettings globalSettings{
-    // settings
-    1280,
-    720,
-    static_cast<double>(1280 / 2.0),
-    static_cast<double>(720 / 2.0),
-    true,
-    // timing
-    0.0f, // time between current frame and last frame
-    0.0f};
+#include "asteroid.h"
+GlobalSettings globalSettings{//NOLINT
+                              .SCR_WIDTH = 1680,
+                              .SCR_HEIGHT = 1050,
+                              .lastX = static_cast<double>(1280 / 2.0),
+                              .lastY = static_cast<double>(720 / 2.0),
+                              .firstMouse = true,
+                              .deltaTime = 0.0f,
+                              .lastFrame = 0.0f,
+                              .processMouse = true};
 static Camera camera(glm::vec3(0.0f, 0.0f, 0.0f)); //NOLINT
+
 int main()
 {
     // glfw: initialize and configure
@@ -51,7 +50,9 @@ int main()
     glfwSetScrollCallback(window, scroll_callback);
 
     // tell GLFW to capture our mouse
+    glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -75,44 +76,49 @@ int main()
     screenShader.use();
     screenShader.setInt("screenTexture", 0);
 
-    imgDemo demoWindow(window);
-    std::vector<glm::vec3> pointLightPositions = {
-        glm::vec3(0.7f, 0.2f, 2.0f),
-        glm::vec3(2.3f, -3.3f, -4.0f),
-        glm::vec3(-4.0f, 2.0f, -12.0f),
-        glm::vec3(0.0f, 0.0f, -3.0f)};
+    debugUI demoWindow(window);
+    std::vector<glm::vec3> pointLightPositions;
+    pointLightPositions.reserve(4);
+    pointLightPositions.emplace_back(glm::vec3(0.7f, 0.2f, 2.0f));
+    pointLightPositions.emplace_back(glm::vec3(2.3f, -3.3f, -4.0f));
+    pointLightPositions.emplace_back(glm::vec3(-4.0f, 2.0f, -12.0f));
+    pointLightPositions.emplace_back(glm::vec3(0.0f, 0.0f, -3.0f));
 
-    std::vector<glm::vec3> grassLocations = {
-        glm::vec3(-1.5f, 0.0f, -0.48f),
-        glm::vec3(1.5f, 0.0f, 0.51f),
-        glm::vec3(0.0f, 0.0f, 0.7f),
-        glm::vec3(-0.3f, 0.0f, -2.3f),
-        glm::vec3(0.5f, 0.0f, -0.6f)};
-    std::vector<float> points = {
+    std::vector<glm::vec3> grassLocations;
+    grassLocations.reserve(5);
+        grassLocations.emplace_back(glm::vec3(-1.5f, 0.0f, -0.48f));
+        grassLocations.emplace_back(glm::vec3(1.5f, 0.0f, 0.51f));
+        grassLocations.emplace_back(glm::vec3(0.0f, 0.0f, 0.7f));
+        grassLocations.emplace_back(glm::vec3(-0.3f, 0.0f, -2.3f));
+        grassLocations.emplace_back(glm::vec3(0.5f, 0.0f, -0.6f));
+    std::vector<float> points{
         -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, // top-left
         0.5f, 0.5f, 0.0f, 1.0f, 0.0f,  // top-right
         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // bottom-right
         -0.5f, -0.5f, 1.0f, 1.0f, 0.0f // bottom-left
     };
-    //Framebuffer framebuff = initFrameBuffer();
+
     unsigned int GVBO{0};
     unsigned int GVAO{0};
     glGenVertexArrays(1, &GVAO);
     glGenBuffers(1, &GVBO);
     glBindBuffer(GL_ARRAY_BUFFER, GVBO);
-    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(points.size() * sizeof(float)), &points.front(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(points.size() * sizeof(&points[0])), &points.front(), GL_STATIC_DRAW);
     glBindVertexArray(GVAO);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), static_cast<void *>(nullptr));
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(&points[0]), nullptr);
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void *>(2 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(&points[0]), reinterpret_cast<void *>(2 * sizeof(&points[0])));
     glBindVertexArray(0);
 
     Grass grass(grassLocations);
     cubeDemo cubes;
     SkyBox skyBox;
     ReflCube reflCube;
+    AsteroidDemo as;
 
+    int a = (float)1;
+    vec3c vc{0.8f, 0.8f, 0.8f};
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while (!glfwWindowShouldClose(window)) {
         // per-frame time logic
@@ -133,9 +139,10 @@ int main()
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(globalSettings.SCR_WIDTH) / static_cast<float>(globalSettings.SCR_HEIGHT), 0.1f, 100.0f);
         auto view = camera.GetViewMatrix();
 
+        as.Draw(projection, view);
         cubes.Draw(camera, projection, view, pointLightPositions);
         sponzaShader.use();
-        renderLights(sponzaShader, pointLightPositions);
+        renderLights(sponzaShader, pointLightPositions, vc);
         // view/projection transformations
         sponzaShader.setMat4("projection", projection);
         sponzaShader.setMat4("view", view);
@@ -157,7 +164,7 @@ int main()
         view = camera.GetViewMatrix();
         grass.Draw(projection, view, camera.Position);
         //mirrorQuad(screenShader,framebuff);
-        //demoWindow.draw(pointLightPositions.data());
+        demoWindow.draw(pointLightPositions.data(), window, vc);
         glfwSwapBuffers(window);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
@@ -170,13 +177,13 @@ int main()
     return 0;
 }
 
-void renderLights(Shader &shader, std::vector<glm::vec3> &pointLightPositions)
+void renderLights(Shader &shader, std::vector<glm::vec3> &pointLightPositions,vec3c colour)
 {
     shader.setInt("material.diffuse", 0);
     shader.setInt("material.specular", 1);
     shader.setFloat("material.shininess", 32.0f);
     /*
-           Here we set all the uniforms for the 5/6 types of lights we have. We have to set them manually and index 
+           Here we set all the uniforms for the 5/6 types of lights we have. We have to set them manually and index
            the proper PointLight struct in the array to set each uniform variable. This can be done more code-friendly
            by defining light types as classes and set their values in there, or by using a more efficient uniform approach
            by using 'Uniform buffer objects', but that is something we'll discuss in the 'Advanced GLSL' tutorial.
@@ -189,7 +196,7 @@ void renderLights(Shader &shader, std::vector<glm::vec3> &pointLightPositions)
     for (unsigned long i = 0; i < pointLightPositions.size(); i++) {
         shader.setVec3("pointLights[" + std::to_string(i) + "].position", pointLightPositions[i]);
         shader.setVec3("pointLights[" + std::to_string(i) + "].ambient", 0.05f, 0.05f, 0.05f);
-        shader.setVec3("pointLights[" + std::to_string(i) + "].diffuse", 0.8f, 0.8f, 0.8f);
+        shader.setVec3("pointLights[" + std::to_string(i) + "].diffuse", colour.x,colour.y, colour.z);
         shader.setVec3("pointLights[" + std::to_string(i) + "].specular", 1.0f, 1.0f, 1.0f);
         shader.setFloat("pointLights[" + std::to_string(i) + "].constant", 1.0f);
         shader.setFloat("pointLights[" + std::to_string(i) + "].linear", 0.09f);
@@ -215,6 +222,16 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
+    if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
+        if(globalSettings.processMouse){
+            globalSettings.processMouse = false;
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        } else {
+            globalSettings.processMouse = true;
+            glfwSetInputMode(window,GLFW_CURSOR , GLFW_CURSOR_DISABLED);
+        }
+    }
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         camera.ProcessKeyboard(FORWARD, globalSettings.deltaTime);
     }
@@ -226,6 +243,9 @@ void processInput(GLFWwindow *window)
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         camera.ProcessKeyboard(RIGHT, globalSettings.deltaTime);
+    }
+       if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        camera.ProcessKeyboard(UP, globalSettings.deltaTime);
     }
 }
 
@@ -251,8 +271,9 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 
     globalSettings.lastX = xpos;
     globalSettings.lastY = ypos;
-
-    camera.ProcessMouseMovement(xoffset, yoffset, true);
+    if(globalSettings.processMouse){
+        camera.ProcessMouseMovement(xoffset, yoffset, true);
+    }
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called

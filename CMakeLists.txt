@@ -30,9 +30,9 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
   endif()
 endif()
 
-option(LWYU "Link What You Use" OFF)
-option(ICWYU "Include What You Use" OFF)
-option(CPPCHECK "Use CPPCHECK" OFF)
+option(LWYU "Link What You Use")
+option(ICWYU "Include What You Use")
+option(CPPCHECK "Use CPPCHECK")
 option(CLANGTIDY "Use Clang-Tidy" ON)
 include(cmake/CmakeProjectSettings.cmake)
 
@@ -46,8 +46,6 @@ if(LWYU)
   set(CMAKE_LINK_WHAT_YOU_USE TRUE)
 endif()
 
-# set( CMAKE_VERBOSE_MAKEFILE on )
-
 if(ICWYU)
   find_program(iwyu_path REQUIRED NAMES include-what-you-use iwyu)
   set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
@@ -56,7 +54,7 @@ endif()
 if(CPPCHECK)
   set(CMAKE_CXX_CPPCHECK
       /opt/homebrew/bin/cppcheck;--std=c++17 --suppress=missingInclude
-      --enable=all --inline-suppr --inconclusive; ${CMAKE_SOURCE_DIR}/src/)
+      --enable=all --inline-suppr --inconclusive --project=${CMAKE_SOURCE_DIR}/build/compile_commands.json; ${CMAKE_SOURCE_DIR}/src/)
 endif()
 
 if(CLANGTIDY)
