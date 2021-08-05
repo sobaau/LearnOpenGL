@@ -157,8 +157,6 @@ int main()
         processInput(window);
         // render
         // ------
-        //mirror(framebuff,cubes,sponzaShader,sponzaModel,pointLightPositions.data(),grass);
-        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
         // clear all relevant buffers
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
         //glClear(GL_COLOR_BUFFER_BIT);
