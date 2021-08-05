@@ -28,7 +28,7 @@ public:
     void setMat4(const std::string &name, const glm::mat4 &mat) const;
 
 private:
-    static void checkCompileErrors(unsigned int shader, std::string_view type);
+    static void checkCompileErrors(unsigned int shader, std::string_view type,std::string_view path);
     static std::string loadShader(std::string_view shaderPath);
 };
 

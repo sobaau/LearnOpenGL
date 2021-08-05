@@ -2,6 +2,8 @@
 #include "camera.h" // for Camera
 #include "cube_layout.h"
 #include "texture_loader.h"
+#include "entities/point_light.h"
+#include "entities/world_light.h"
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
@@ -54,44 +56,8 @@ cubeDemo::cubeDemo()
     lightingShader.setInt("material.specular", 1);
 }
 
-void cubeDemo::Draw(Camera const &camera, const glm::mat4 &projection, const glm::mat4 &view, const std::vector<glm::vec3> &pointLightPositions)
+void cubeDemo::draw(Camera const &camera, const glm::mat4 &projection, const glm::mat4 &view, const std::vector<PointLight> &pointLights, const WorldLight &worldLight)
 {
-
-    // be sure to activate shader when setting uniforms/drawing objects
-    lightingShader.use();
-    lightingShader.setVec3("viewPos", camera.Position);
-    lightingShader.setFloat("material.shininess", 32.0f);
-    /*
-           Here we set all the uniforms for the 5/6 types of lights we have. We have to set them manually and index 
-           the proper PointLight struct in the array to set each uniform variable. This can be done more code-friendly
-           by defining light types as classes and set their values in there, or by using a more efficient uniform approach
-           by using 'Uniform buffer objects', but that is something we'll discuss in the 'Advanced GLSL' tutorial.
-        */
-    // directional light
-    lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-    lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-    lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-    lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-    for (unsigned long i = 0; i < pointLightPositions.size(); i++) {
-        lightingShader.setVec3("pointLights[" + std::to_string(i) + "].position", pointLightPositions[i]);
-        lightingShader.setVec3("pointLights[" + std::to_string(i) + "].ambient", 0.05f, 0.05f, 0.05f);
-        lightingShader.setVec3("pointLights[" + std::to_string(i) + "].diffuse", 0.8f, 0.8f, 0.8f);
-        lightingShader.setVec3("pointLights[" + std::to_string(i) + "].specular", 1.0f, 1.0f, 1.0f);
-        lightingShader.setFloat("pointLights[" + std::to_string(i) + "].constant", 1.0f);
-        lightingShader.setFloat("pointLights[" + std::to_string(i) + "].linear", 0.09f);
-        lightingShader.setFloat("pointLights[" + std::to_string(i) + "].quadratic", 0.032f);
-    }
-    lightingShader.setVec3("spotLight.position", camera.Position);
-    lightingShader.setVec3("spotLight.direction", camera.Front);
-    lightingShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-    lightingShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-    lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-    lightingShader.setFloat("spotLight.constant", 1.0f);
-    lightingShader.setFloat("spotLight.linear", 0.09f);
-    lightingShader.setFloat("spotLight.quadratic", 0.032f);
-    lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-    lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
-
     // view/projection transformations
     lightingShader.setMat4("projection", projection);
     lightingShader.setMat4("view", view);
@@ -126,14 +92,19 @@ void cubeDemo::Draw(Camera const &camera, const glm::mat4 &projection, const glm
 
     // we now draw as many light bulbs as we have point lights.
     glBindVertexArray(lightCubeVAO);
-    for (auto pointLightPosition : pointLightPositions) {
+    for (const auto &pointLight : pointLights) {
         model = glm::mat4(1.0f);
-        model = glm::translate(model, pointLightPosition);
+        model = glm::translate(model, pointLight.position);
         model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
         lightCubeShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
     glBindVertexArray(0);
+}
+
+Shader cubeDemo::getShader() const
+{
+    return lightingShader;
 }
 
 void cubeDemo::cleanUp()

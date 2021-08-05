@@ -30,6 +30,9 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
   endif()
 endif()
 
+include(cmake/Doxygen.cmake)
+enable_doxygen()
+
 option(LWYU "Link What You Use")
 option(ICWYU "Include What You Use")
 option(CPPCHECK "Use CPPCHECK")
@@ -54,7 +57,7 @@ endif()
 if(CPPCHECK)
   set(CMAKE_CXX_CPPCHECK
       /opt/homebrew/bin/cppcheck;--std=c++17 --suppress=missingInclude
-      --enable=all --inline-suppr --inconclusive --project=${CMAKE_SOURCE_DIR}/build/compile_commands.json; ${CMAKE_SOURCE_DIR}/src/)
+      --enable=all --inline-suppr -i dependencies --report-progress --output-file=cppcheck.txt; ${CMAKE_SOURCE_DIR}/src/)
 endif()
 
 if(CLANGTIDY)

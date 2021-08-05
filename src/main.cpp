@@ -1,8 +1,12 @@
 #include "main.h"
+#include "asteroid.h"
 #include "camera.h"
 #include "cube_demo.h"
-#include "grass.h"
 #include "debug_ui.h"
+#include "entities/point_light.h"
+#include "entities/spot_light.h"
+#include "entities/world_light.h"
+#include "grass.h"
 #include "model.h"
 #include "r_cube.h"
 #include "shader.h"
@@ -11,7 +15,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
-#include "asteroid.h"
 GlobalSettings globalSettings{//NOLINT
                               .SCR_WIDTH = 1680,
                               .SCR_HEIGHT = 1050,
@@ -20,7 +23,8 @@ GlobalSettings globalSettings{//NOLINT
                               .firstMouse = true,
                               .deltaTime = 0.0f,
                               .lastFrame = 0.0f,
-                              .processMouse = true};
+                              .processMouse = true,
+                              .debug = false};
 static Camera camera(glm::vec3(0.0f, 0.0f, 0.0f)); //NOLINT
 
 int main()
@@ -48,11 +52,10 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
-
+    glfwSetKeyCallback(window, key_callback);
     // tell GLFW to capture our mouse
-    glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
+    //glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -77,20 +80,14 @@ int main()
     screenShader.setInt("screenTexture", 0);
 
     debugUI demoWindow(window);
-    std::vector<glm::vec3> pointLightPositions;
-    pointLightPositions.reserve(4);
-    pointLightPositions.emplace_back(glm::vec3(0.7f, 0.2f, 2.0f));
-    pointLightPositions.emplace_back(glm::vec3(2.3f, -3.3f, -4.0f));
-    pointLightPositions.emplace_back(glm::vec3(-4.0f, 2.0f, -12.0f));
-    pointLightPositions.emplace_back(glm::vec3(0.0f, 0.0f, -3.0f));
 
     std::vector<glm::vec3> grassLocations;
     grassLocations.reserve(5);
-        grassLocations.emplace_back(glm::vec3(-1.5f, 0.0f, -0.48f));
-        grassLocations.emplace_back(glm::vec3(1.5f, 0.0f, 0.51f));
-        grassLocations.emplace_back(glm::vec3(0.0f, 0.0f, 0.7f));
-        grassLocations.emplace_back(glm::vec3(-0.3f, 0.0f, -2.3f));
-        grassLocations.emplace_back(glm::vec3(0.5f, 0.0f, -0.6f));
+    grassLocations.emplace_back(glm::vec3(-1.5f, 0.0f, -0.48f));
+    grassLocations.emplace_back(glm::vec3(1.5f, 0.0f, 0.51f));
+    grassLocations.emplace_back(glm::vec3(0.0f, 0.0f, 0.7f));
+    grassLocations.emplace_back(glm::vec3(-0.3f, 0.0f, -2.3f));
+    grassLocations.emplace_back(glm::vec3(0.5f, 0.0f, -0.6f));
     std::vector<float> points{
         -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, // top-left
         0.5f, 0.5f, 0.0f, 1.0f, 0.0f,  // top-right
@@ -116,9 +113,38 @@ int main()
     SkyBox skyBox;
     ReflCube reflCube;
     AsteroidDemo as;
+    WorldLight wLight("World Light",
+                      glm::vec3(-0.2f, -1.0f, -0.3f), glm::vec3(0.05f, 0.05f, 0.05f),
+                      glm::vec3(0.4f, 0.4f, 0.4f), glm::vec3(0.5f, 0.5f, 0.5f));
 
-    int a = (float)1;
-    vec3c vc{0.8f, 0.8f, 0.8f};
+    std::vector<PointLight> pointLights;
+    pointLights.reserve(4);
+
+    pointLights.emplace_back(PointLight("Point Light 1",
+                                        glm::vec3(0.7f, 0.2f, 2.0f),
+                                        1.0f, 0.09f, 0.032f,
+                                        glm::vec3(0.05f, 0.05f, 0.05f),
+                                        glm::vec3(0.8f, 0.8f, 0.8f),
+                                        glm::vec3(1.0f, 1.0f, 1.0f)));
+    pointLights.emplace_back(PointLight("Point Light 2",
+                                        glm::vec3(2.3f, -3.3f, -4.0f),
+                                        1.0f, 0.09f, 0.032f,
+                                        glm::vec3(0.05f, 0.05f, 0.05f),
+                                        glm::vec3(0.8f, 0.8f, 0.8f),
+                                        glm::vec3(1.0f, 1.0f, 1.0f)));
+    pointLights.emplace_back(PointLight("Point Light 3",
+                                        glm::vec3(-4.0f, 2.0f, -12.0f),
+                                        1.0f, 0.09f, 0.032f,
+                                        glm::vec3(0.05f, 0.05f, 0.05f),
+                                        glm::vec3(0.8f, 0.8f, 0.8f),
+                                        glm::vec3(1.0f, 1.0f, 1.0f)));
+    pointLights.emplace_back(PointLight("Point Light 4",
+                                        glm::vec3(0.5f, 0.0f, -0.6f),
+                                        1.0f, 0.09f, 0.032f,
+                                        glm::vec3(0.05f, 0.05f, 0.05f),
+                                        glm::vec3(0.8f, 0.8f, 0.8f),
+                                        glm::vec3(1.0f, 1.0f, 1.0f)));
+
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while (!glfwWindowShouldClose(window)) {
         // per-frame time logic
@@ -138,11 +164,12 @@ int main()
         //glClear(GL_COLOR_BUFFER_BIT);
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(globalSettings.SCR_WIDTH) / static_cast<float>(globalSettings.SCR_HEIGHT), 0.1f, 100.0f);
         auto view = camera.GetViewMatrix();
-
+        renderLights(as.planetShader,pointLights,wLight);
+        renderLights(as.asteroidShader,pointLights,wLight);
         as.Draw(projection, view);
-        cubes.Draw(camera, projection, view, pointLightPositions);
-        sponzaShader.use();
-        renderLights(sponzaShader, pointLightPositions, vc);
+        renderLights(cubes.getShader(),pointLights, wLight);
+        cubes.draw(camera, projection, view, pointLights, wLight);
+        renderLights(sponzaShader, pointLights, wLight);
         // view/projection transformations
         sponzaShader.setMat4("projection", projection);
         sponzaShader.setMat4("view", view);
@@ -151,20 +178,17 @@ int main()
         model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
         sponzaShader.setMat4("model", model);
-        //sponzaShader.setFloat("time", glfwGetTime());
         sponzaModel.Draw(sponzaShader);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.skyTexture);
         reflCube.draw(view, projection, camera);
         view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
         skyBox.draw(view, projection);
-        // geoShader.use();
-        // glBindVertexArray(GVAO);
-        // glDrawArrays(GL_POINTS, 0, 4);
         view = camera.GetViewMatrix();
         grass.Draw(projection, view, camera.Position);
-        //mirrorQuad(screenShader,framebuff);
-        demoWindow.draw(pointLightPositions.data(), window, vc);
+        if (globalSettings.debug) {
+            demoWindow.draw(window, pointLights, wLight);
+        }
         glfwSwapBuffers(window);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
@@ -177,8 +201,9 @@ int main()
     return 0;
 }
 
-void renderLights(Shader &shader, std::vector<glm::vec3> &pointLightPositions,vec3c colour)
+void renderLights(const Shader &shader, std::vector<PointLight> &pointLights, WorldLight &worldLight)
 {
+    shader.use();
     shader.setInt("material.diffuse", 0);
     shader.setInt("material.specular", 1);
     shader.setFloat("material.shininess", 32.0f);
@@ -189,20 +214,19 @@ void renderLights(Shader &shader, std::vector<glm::vec3> &pointLightPositions,ve
            by using 'Uniform buffer objects', but that is something we'll discuss in the 'Advanced GLSL' tutorial.
         */
     // directional light
-    shader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-    shader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-    shader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-    shader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-    for (unsigned long i = 0; i < pointLightPositions.size(); i++) {
-        shader.setVec3("pointLights[" + std::to_string(i) + "].position", pointLightPositions[i]);
-        shader.setVec3("pointLights[" + std::to_string(i) + "].ambient", 0.05f, 0.05f, 0.05f);
-        shader.setVec3("pointLights[" + std::to_string(i) + "].diffuse", colour.x,colour.y, colour.z);
-        shader.setVec3("pointLights[" + std::to_string(i) + "].specular", 1.0f, 1.0f, 1.0f);
-        shader.setFloat("pointLights[" + std::to_string(i) + "].constant", 1.0f);
-        shader.setFloat("pointLights[" + std::to_string(i) + "].linear", 0.09f);
-        shader.setFloat("pointLights[" + std::to_string(i) + "].quadratic", 0.032f);
+    shader.setVec3("dirLight.direction", worldLight.direction.x, worldLight.direction.y, worldLight.direction.z);
+    shader.setVec3("dirLight.ambient", worldLight.ambient.x, worldLight.ambient.y, worldLight.ambient.z);
+    shader.setVec3("dirLight.diffuse", worldLight.diffuse.x, worldLight.diffuse.y, worldLight.diffuse.z);
+    shader.setVec3("dirLight.specular", worldLight.specular.x, worldLight.specular.y, worldLight.specular.z);
+    for (unsigned long i = 0; i < pointLights.size(); i++) {
+        shader.setVec3("pointLights[" + std::to_string(i) + "].position", pointLights[i].position);
+        shader.setVec3("pointLights[" + std::to_string(i) + "].ambient", pointLights[i].ambient.x, pointLights[i].ambient.y, pointLights[i].ambient.z);
+        shader.setVec3("pointLights[" + std::to_string(i) + "].diffuse", pointLights[i].diffuse.x, pointLights[i].diffuse.y, pointLights[i].diffuse.z);
+        shader.setVec3("pointLights[" + std::to_string(i) + "].specular", pointLights[i].specular.x, pointLights[i].specular.y, pointLights[i].specular.z);
+        shader.setFloat("pointLights[" + std::to_string(i) + "].constant", pointLights[i].constant);
+        shader.setFloat("pointLights[" + std::to_string(i) + "].linear", pointLights[i].linear);
+        shader.setFloat("pointLights[" + std::to_string(i) + "].quadratic", pointLights[i].quadratic);
     }
-    // spotLight
     shader.setVec3("spotLight.position", camera.Position);
     shader.setVec3("spotLight.direction", camera.Front);
     shader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
@@ -222,16 +246,6 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
-    if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
-        if(globalSettings.processMouse){
-            globalSettings.processMouse = false;
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        } else {
-            globalSettings.processMouse = true;
-            glfwSetInputMode(window,GLFW_CURSOR , GLFW_CURSOR_DISABLED);
-        }
-    }
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         camera.ProcessKeyboard(FORWARD, globalSettings.deltaTime);
     }
@@ -244,8 +258,24 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         camera.ProcessKeyboard(RIGHT, globalSettings.deltaTime);
     }
-       if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         camera.ProcessKeyboard(UP, globalSettings.deltaTime);
+    }
+}
+
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_M && action == GLFW_PRESS) {
+        if (globalSettings.processMouse) {
+            globalSettings.processMouse = false;
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        } else {
+            globalSettings.processMouse = true;
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
+    }
+    if (key == GLFW_KEY_GRAVE_ACCENT && action == GLFW_PRESS) {
+        globalSettings.debug = !globalSettings.debug;
     }
 }
 
@@ -271,7 +301,7 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 
     globalSettings.lastX = xpos;
     globalSettings.lastY = ypos;
-    if(globalSettings.processMouse){
+    if (globalSettings.processMouse) {
         camera.ProcessMouseMovement(xoffset, yoffset, true);
     }
 }

@@ -1,9 +1,12 @@
 #include "debug_ui.h"
+#include "entities/point_light.h"
+#include "entities/world_light.h"
 #include "imgui.h"
 #include <GLFW/glfw3.h>
 #include <glm/vec3.hpp>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <vector>
 
 debugUI::debugUI(GLFWwindow *window) : show_demo_window(true), show_another_window(false), clear_color(ImVec4(0.45f, 0.55f, 0.60f, 1.00f))
 {
@@ -22,19 +25,61 @@ debugUI::debugUI(GLFWwindow *window) : show_demo_window(true), show_another_wind
     ImGui_ImplOpenGL3_Init(glsl_version);
 }
 
-void debugUI::draw(glm::vec3 *point, GLFWwindow *window, vec3c &colour)
+void debugUI::draw(GLFWwindow *window, std::vector<PointLight> &pointLights, WorldLight &worldLight)
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     menu_bar(window);
+    world_light(pointLights[0].diffuse, worldLight);
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
     if (show_demo_window) {
         ImGui::ShowDemoWindow(&show_demo_window);
     }
-
+    if (ImGui::TreeNode("Point Lights")) {
+        for (int i = 0; i < pointLights.size(); i++) {
+            // Use SetNextItemOpen() so set the default state of a node to be open. We could
+            // also use TreeNodeEx() with the ImGuiTreeNodeFlags_DefaultOpen flag to achieve the same thing!
+            if (i == 0) {
+                ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+            }
+            if (ImGui::TreeNode((void *)(intptr_t)i, "%s", pointLights[i].name.c_str())) {
+                if (ImGui::SmallButton("Edit")) {
+                    light = i;
+                    open = !open;
+                }
+                ImGui::TreePop();
+            }
+        }
+        ImGui::TreePop();
+    }
+    if (open) {
+        editLight(pointLights[light]);
+    }
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void debugUI::editLight(PointLight &light)
+{
+    float step = .1f;
+    ImGui::Begin(light.name.c_str());
+    ImGui::SliderFloat3("Ambient", &light.ambient.x, 0.0f, 1.0f);
+    ImGui::SliderFloat3("Position", &light.position.x, -100.f, 100.f);
+    ImGui::PushItemWidth(100.f); 
+    ImGui::InputScalar("x", ImGuiDataType_Float ,&light.position.x, &step);
+    ImGui::SameLine();
+    ImGui::InputScalar("y", ImGuiDataType_Float ,&light.position.y, &step);
+    ImGui::SameLine();    
+    ImGui::InputScalar("z", ImGuiDataType_Float ,&light.position.z, &step);
+    ImGui::PopItemWidth();
+    ImGui::SliderFloat3("Specular", &light.specular.x, 0.0f, 1.0f);
+    ImGui::SliderFloat("constant", &light.constant, 0.0f, 1.0f);
+    ImGui::SliderFloat("linear", &light.linear, 0.0f, 1.0f);
+    ImGui::SliderFloat("quadratic", &light.quadratic, 0.0f, 1.0f);
+    ImGui::SliderFloat3("Colour", &light.diffuse.x, 0.0f, 1.0f);
+    ImGui::ColorEdit3("clear color", &light.diffuse.x);
+    ImGui::End();
 }
 
 void debugUI::shutdown()
@@ -71,32 +116,13 @@ void debugUI::menu_bar(GLFWwindow *window)
     }
 }
 
-void debugUI::demo_window(vec3c &colour)
+void debugUI::world_light(glm::vec3 &colour, WorldLight &worldLight)
 {
-    static int counter = 0;
-    ImGui::Begin("Hello, world!");                     // Create a window called "Hello, world!" and append into it.
-    ImGui::Text("This is some useful text.");          // Display some text (you can use a format strings too)
-    ImGui::Checkbox("Demo Window", &show_demo_window); // Edit bools storing our window open/close state
-    ImGui::Checkbox("Another Window", &show_another_window);
-
-    ImGui::SliderFloat3("float3", reinterpret_cast<float *>(&colour), 0.0f, 1.0f); // Edit 1 float using a slider from 0.0f to 1.0f
-                                                                                   // Edit 1 float using a slider from 0.0f to 1.0f
-    ImGui::ColorEdit3("clear color", reinterpret_cast<float *>(&colour));          // Edit 3 floats representing a color
-
-    if (ImGui::Button("Button")) { // Buttons return true when clicked (most widgets return true when edited/activated)
-        counter++;
-    }
-    ImGui::SameLine();
-    ImGui::Text("counter = %d", counter);
-    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", static_cast<double>(1000.0f / ImGui::GetIO().Framerate), static_cast<double>(ImGui::GetIO().Framerate));
+    ImGui::Begin("World Light");
+    ImGui::SliderFloat3("Ambient", &worldLight.ambient.x, 0.0f, 1.0f);
+    ImGui::SliderFloat3("Direction", &worldLight.direction.x, -1.0f, 1.0f);
+    ImGui::SliderFloat3("Specular", &worldLight.specular.x, 0.0f, 1.0f);
+    ImGui::SliderFloat3("Diffuse", &worldLight.diffuse.x, 0.0f, 1.0f); // Edit 1 float using a slider from 0.0f to 1.0f
+    ImGui::ColorEdit3("clear color", &worldLight.diffuse.x);
     ImGui::End();
-    // 3. Show another simple window.
-    if (show_another_window) {
-        ImGui::Begin("Another Window", &show_another_window); // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-        ImGui::Text("Hello from another window!");
-        if (ImGui::Button("Close Me")) {
-            show_another_window = false;
-        }
-        ImGui::End();
-    }
 }

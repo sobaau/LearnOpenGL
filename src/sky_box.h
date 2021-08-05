@@ -17,7 +17,7 @@ class SkyBox
 
 public:
     SkyBox();
-    void draw(glm::mat4 &view, glm::mat4 &projection);
+    void draw(const glm::mat4 &view, const glm::mat4 &projection);
     unsigned int skyTexture;
 };
 

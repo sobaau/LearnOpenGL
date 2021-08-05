@@ -1,5 +1,7 @@
 #pragma once
 #include "shader.h"
+#include "entities/point_light.h"
+#include "entities/world_light.h"
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 #include <vector>
@@ -19,5 +21,6 @@ public:
     const unsigned int specularMap;
     cubeDemo();
     void cleanUp();
-    void Draw(Camera const &camera, const glm::mat4 &projection, const glm::mat4 &view, const std::vector<glm::vec3> &pointLightPositions);
+    void draw(Camera const &camera, const glm::mat4 &projection, const glm::mat4 &view, const std::vector<PointLight> &pointLights, const WorldLight &worldLight);
+    [[nodiscard]] Shader getShader() const;
 };

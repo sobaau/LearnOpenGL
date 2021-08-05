@@ -11,8 +11,8 @@
 #include <string_view>
 #include <utility>
 
-AsteroidDemo::AsteroidDemo() : asteroidShader("shaders/asteroid.vert", "shaders/asteroid.frag"),
-                               planetShader("shaders/planet.vert", "shaders/planet.frag"),
+AsteroidDemo::AsteroidDemo() : asteroidShader("shaders/asteroid.vert", "shaders/light.frag"),
+                               planetShader("shaders/shader.vert", "shaders/light.frag"),
                                rock("rock/rock.obj"),
                                planet("planet/planet.obj")
 {
@@ -75,9 +75,6 @@ AsteroidDemo::AsteroidDemo() : asteroidShader("shaders/asteroid.vert", "shaders/
 void AsteroidDemo::Draw(glm::mat4 &projection, glm::mat4 &view)
 {
 
-    asteroidShader.use();
-    asteroidShader.setMat4("projection", projection);
-    asteroidShader.setMat4("view", view);
     planetShader.use();
     planetShader.setMat4("projection", projection);
     planetShader.setMat4("view", view);
@@ -91,7 +88,9 @@ void AsteroidDemo::Draw(glm::mat4 &projection, glm::mat4 &view)
 
     // draw meteorites
     asteroidShader.use();
-    asteroidShader.setInt("texture_diffuse1", 0);
+    asteroidShader.setMat4("projection", projection);
+    asteroidShader.setMat4("view", view);
+    //asteroidShader.setInt("texture_diffuse1", 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, rock.textures_loaded[0].id);
     for (auto const &m : rock.meshes) {

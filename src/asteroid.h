@@ -13,13 +13,14 @@ class AsteroidDemo
     constexpr static float radius{75.0};
     constexpr static float offset{50.5f};
     std::vector<glm::mat4> asteroidMatrices;
-    Shader asteroidShader;
-    Shader planetShader;
-    Model rock;
-    Model planet;
+
 
 public:
     AsteroidDemo();
     void Draw(glm::mat4 &projection, glm::mat4 &view);
+    Shader asteroidShader;
+    Shader planetShader;
+    Model rock;
+    Model planet;
 };
 #endif // ASTEROID_H_

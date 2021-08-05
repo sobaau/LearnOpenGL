@@ -1,6 +1,7 @@
 #ifndef MAIN_H_
 #define MAIN_H_
-
+#include "entities/world_light.h"
+#include "entities/point_light.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/vec3.hpp>
@@ -19,16 +20,14 @@ struct GlobalSettings {
     float deltaTime;
     float lastFrame;
     bool processMouse;
+    bool debug;
 };
- struct vec3c {
-        float x;
-        float y;
-        float z;
-    };
+
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
-void renderLights(Shader &ourShader, std::vector<glm::vec3> &pointLightPositions,vec3c colour);
+void renderLights(const Shader &ourShader, std::vector<PointLight> &pointLights, WorldLight &worldLight);
 void processInput(GLFWwindow *window);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 #endif // MAIN_H_

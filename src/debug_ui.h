@@ -2,8 +2,10 @@
 
 #include <GLFW/glfw3.h>
 #include <glm/vec3.hpp>
+#include <vector>
 #include <imgui.h>
-struct vec3c;
+struct WorldLight;
+struct PointLight;
 class debugUI
 {
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
@@ -13,11 +15,15 @@ class debugUI
     // Setup Platform/Renderer backends
     bool show_demo_window;
     bool show_another_window;
+    bool open = false;
+    int light{0};
+
     ImVec4 clear_color;
     static void menu_bar(GLFWwindow *window);
-    void demo_window(vec3c &colour);
+    void world_light(glm::vec3 &colour, WorldLight &worldLight);
 public:
     explicit debugUI(GLFWwindow *window);
     void shutdown();
-    void draw(glm::vec3 *point,GLFWwindow *window, vec3c &colour);
+    void draw(GLFWwindow *window, std::vector<PointLight> &pointLights, WorldLight &worldLight);
+    void editLight(PointLight &light);
 };

@@ -66,7 +66,7 @@ SkyBox::SkyBox()
     skyBoxShader.setInt("skybox", 0);
 }
 
-void SkyBox::draw(glm::mat4 &view, glm::mat4 &projection)
+void SkyBox::draw(const glm::mat4 &view, const glm::mat4 &projection)
 {
     glDepthFunc(GL_LEQUAL); // change depth function so depth test passes when values are equal to depth buffer's content
     skyBoxShader.use();
