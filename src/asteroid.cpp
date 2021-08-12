@@ -10,6 +10,7 @@
 #include <random>
 #include <string_view>
 #include <utility>
+#include <glad/glad.h>
 
 AsteroidDemo::AsteroidDemo() : asteroidShader("shaders/asteroid.vert", "shaders/light.frag"),
                                planetShader("shaders/shader.vert", "shaders/light.frag"),
@@ -41,7 +42,7 @@ AsteroidDemo::AsteroidDemo() : asteroidShader("shaders/asteroid.vert", "shaders/
         model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
 
         // 4. now add to list of matrices
-        asteroidMatrices.emplace_back(model);
+        asteroidMatrices.push_back(model);
     }
     // vertex buffer object
     unsigned int buffer{0};

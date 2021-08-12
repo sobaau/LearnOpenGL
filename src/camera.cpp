@@ -1,6 +1,6 @@
 #include "camera.h"
 #include <glm/gtc/matrix_transform.hpp>
-
+#include <glad/glad.h>
 Camera::Camera(glm::vec3 position) noexcept : Position(position),
                                      Front(glm::vec3(0.0f, 0.0f, -1.0f)),
                                      Up(glm::vec3(0, 0, 0)),

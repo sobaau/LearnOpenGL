@@ -35,6 +35,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -70,6 +71,7 @@ int main()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_CULL_FACE);
+    glEnable(GL_MULTISAMPLE);
 
     //stbi_set_flip_vertically_on_load(true);
     Shader sponzaShader("shaders/shader.vert", "shaders/light.frag");
@@ -83,11 +85,11 @@ int main()
 
     std::vector<glm::vec3> grassLocations;
     grassLocations.reserve(5);
-    grassLocations.emplace_back(glm::vec3(-1.5f, 0.0f, -0.48f));
-    grassLocations.emplace_back(glm::vec3(1.5f, 0.0f, 0.51f));
-    grassLocations.emplace_back(glm::vec3(0.0f, 0.0f, 0.7f));
-    grassLocations.emplace_back(glm::vec3(-0.3f, 0.0f, -2.3f));
-    grassLocations.emplace_back(glm::vec3(0.5f, 0.0f, -0.6f));
+    grassLocations.emplace_back(-1.5f, 0.0f, -0.48f);
+    grassLocations.emplace_back(1.5f, 0.0f, 0.51f);
+    grassLocations.emplace_back(0.0f, 0.0f, 0.7f);
+    grassLocations.emplace_back(-0.3f, 0.0f, -2.3f);
+    grassLocations.emplace_back(0.5f, 0.0f, -0.6f);
     std::vector<float> points{
         -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, // top-left
         0.5f, 0.5f, 0.0f, 1.0f, 0.0f,  // top-right
@@ -97,6 +99,7 @@ int main()
 
     unsigned int GVBO{0};
     unsigned int GVAO{0};
+
     glGenVertexArrays(1, &GVAO);
     glGenBuffers(1, &GVBO);
     glBindBuffer(GL_ARRAY_BUFFER, GVBO);
@@ -108,42 +111,62 @@ int main()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(&points[0]), reinterpret_cast<void *>(2 * sizeof(&points[0])));
     glBindVertexArray(0);
 
+    unsigned int FBO{0};
+    glGenFramebuffers(1, &FBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glfwGetFramebufferSize(window, &globalSettings.SCR_WIDTH, &globalSettings.SCR_HEIGHT);
+    unsigned int fb_tex{0};
+    glGenTextures(1, &fb_tex);
+    glBindTexture(GL_TEXTURE_2D, fb_tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, globalSettings.SCR_WIDTH, globalSettings.SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fb_tex, 0);
+    unsigned int rbo{0};
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, globalSettings.SCR_WIDTH, globalSettings.SCR_HEIGHT);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     Grass grass(grassLocations);
     cubeDemo cubes;
     SkyBox skyBox;
     ReflCube reflCube;
     AsteroidDemo as;
     WorldLight wLight("World Light",
-                      glm::vec3(-0.2f, -1.0f, -0.3f), glm::vec3(0.05f, 0.05f, 0.05f),
-                      glm::vec3(0.4f, 0.4f, 0.4f), glm::vec3(0.5f, 0.5f, 0.5f));
+                      {-0.2f, -1.0f, -0.3f}, {0.05f, 0.05f, 0.05f},
+                      {0.4f, 0.4f, 0.4f}, {0.5f, 0.5f, 0.5f});
 
     std::vector<PointLight> pointLights;
     pointLights.reserve(4);
-
     pointLights.emplace_back(PointLight("Point Light 1",
-                                        glm::vec3(0.7f, 0.2f, 2.0f),
+                                        {0.7f, 0.2f, 2.0f},
                                         1.0f, 0.09f, 0.032f,
-                                        glm::vec3(0.05f, 0.05f, 0.05f),
-                                        glm::vec3(0.8f, 0.8f, 0.8f),
-                                        glm::vec3(1.0f, 1.0f, 1.0f)));
+                                        {0.05f, 0.05f, 0.05f},
+                                        {0.8f, 0.8f, 0.8f},
+                                        {1.0f, 1.0f, 1.0f}));
     pointLights.emplace_back(PointLight("Point Light 2",
-                                        glm::vec3(2.3f, -3.3f, -4.0f),
+                                        {2.3f, -3.3f, -4.0f},
                                         1.0f, 0.09f, 0.032f,
-                                        glm::vec3(0.05f, 0.05f, 0.05f),
-                                        glm::vec3(0.8f, 0.8f, 0.8f),
-                                        glm::vec3(1.0f, 1.0f, 1.0f)));
+                                        {0.05f, 0.05f, 0.05f},
+                                        {0.8f, 0.8f, 0.8f},
+                                        {1.0f, 1.0f, 1.0f}));
     pointLights.emplace_back(PointLight("Point Light 3",
-                                        glm::vec3(-4.0f, 2.0f, -12.0f),
+                                        {-4.0f, 2.0f, -12.0f},
                                         1.0f, 0.09f, 0.032f,
-                                        glm::vec3(0.05f, 0.05f, 0.05f),
-                                        glm::vec3(0.8f, 0.8f, 0.8f),
-                                        glm::vec3(1.0f, 1.0f, 1.0f)));
+                                        {0.05f, 0.05f, 0.05f},
+                                        {0.8f, 0.8f, 0.8f},
+                                        {1.0f, 1.0f, 1.0f}));
     pointLights.emplace_back(PointLight("Point Light 4",
-                                        glm::vec3(0.5f, 0.0f, -0.6f),
+                                        {0.5f, 0.0f, -0.6f},
                                         1.0f, 0.09f, 0.032f,
-                                        glm::vec3(0.05f, 0.05f, 0.05f),
-                                        glm::vec3(0.8f, 0.8f, 0.8f),
-                                        glm::vec3(1.0f, 1.0f, 1.0f)));
+                                        {0.05f, 0.05f, 0.05f},
+                                        {0.8f, 0.8f, 0.8f},
+                                        {1.0f, 1.0f, 1.0f}));
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while (!glfwWindowShouldClose(window)) {
@@ -158,14 +181,17 @@ int main()
         // render
         // ------
         // clear all relevant buffers
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
-        //glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(0.0f, 0.0f, 0.0f,0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(globalSettings.SCR_WIDTH) / static_cast<float>(globalSettings.SCR_HEIGHT), 0.1f, 100.0f);
         auto view = camera.GetViewMatrix();
-        renderLights(as.planetShader,pointLights,wLight);
-        renderLights(as.asteroidShader,pointLights,wLight);
+        renderLights(as.planetShader, pointLights, wLight);
+        renderLights(as.asteroidShader, pointLights, wLight);
         as.Draw(projection, view);
-        renderLights(cubes.getShader(),pointLights, wLight);
+        renderLights(cubes.getShader(), pointLights, wLight);
         cubes.draw(camera, projection, view, pointLights, wLight);
         renderLights(sponzaShader, pointLights, wLight);
         // view/projection transformations
@@ -184,11 +210,13 @@ int main()
         skyBox.draw(view, projection);
         view = camera.GetViewMatrix();
         grass.Draw(projection, view, camera.Position);
-        if (globalSettings.debug) {
-            demoWindow.draw(window, pointLights, wLight);
-        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        //if (globalSettings.debug) {
+        demoWindow.draw(window, pointLights, wLight, fb_tex, camera);
+        //}
+
         glfwSwapBuffers(window);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
     }
 
@@ -212,29 +240,41 @@ void renderLights(const Shader &shader, std::vector<PointLight> &pointLights, Wo
            by using 'Uniform buffer objects', but that is something we'll discuss in the 'Advanced GLSL' tutorial.
         */
     // directional light
-    shader.setVec3("dirLight.direction", worldLight.direction.x, worldLight.direction.y, worldLight.direction.z);
-    shader.setVec3("dirLight.ambient", worldLight.ambient.x, worldLight.ambient.y, worldLight.ambient.z);
-    shader.setVec3("dirLight.diffuse", worldLight.diffuse.x, worldLight.diffuse.y, worldLight.diffuse.z);
-    shader.setVec3("dirLight.specular", worldLight.specular.x, worldLight.specular.y, worldLight.specular.z);
-    for (unsigned long i = 0; i < pointLights.size(); i++) {
-        shader.setVec3("pointLights[" + std::to_string(i) + "].position", pointLights[i].position);
-        shader.setVec3("pointLights[" + std::to_string(i) + "].ambient", pointLights[i].ambient.x, pointLights[i].ambient.y, pointLights[i].ambient.z);
-        shader.setVec3("pointLights[" + std::to_string(i) + "].diffuse", pointLights[i].diffuse.x, pointLights[i].diffuse.y, pointLights[i].diffuse.z);
-        shader.setVec3("pointLights[" + std::to_string(i) + "].specular", pointLights[i].specular.x, pointLights[i].specular.y, pointLights[i].specular.z);
-        shader.setFloat("pointLights[" + std::to_string(i) + "].constant", pointLights[i].constant);
-        shader.setFloat("pointLights[" + std::to_string(i) + "].linear", pointLights[i].linear);
-        shader.setFloat("pointLights[" + std::to_string(i) + "].quadratic", pointLights[i].quadratic);
+    shader.setVec3("dirLight.direction", worldLight.direction);
+    shader.setVec3("dirLight.ambient", worldLight.ambient);
+    shader.setVec3("dirLight.diffuse", worldLight.diffuse);
+    shader.setVec3("dirLight.specular", worldLight.specular);
+    if (!pointLights.empty()) {
+        for (unsigned long i = 0; i < pointLights.size(); i++) {
+            shader.setVec3("pointLights[" + std::to_string(i) + "].position", pointLights[i].position);
+            shader.setVec3("pointLights[" + std::to_string(i) + "].ambient", pointLights[i].ambient);
+            shader.setVec3("pointLights[" + std::to_string(i) + "].diffuse", pointLights[i].diffuse);
+            shader.setVec3("pointLights[" + std::to_string(i) + "].specular", pointLights[i].specular);
+            shader.setFloat("pointLights[" + std::to_string(i) + "].constant", pointLights[i].constant);
+            shader.setFloat("pointLights[" + std::to_string(i) + "].linear", pointLights[i].linear);
+            shader.setFloat("pointLights[" + std::to_string(i) + "].quadratic", pointLights[i].quadratic);
+            shader.setInt("LightPoints", static_cast<int>(pointLights.size()));
+        }
+    } else {
+        shader.setVec3("pointLights[0].position", glm::vec3(0.0f, 0.0f, 0.0f));
+        shader.setVec3("pointLights[0].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
+        shader.setVec3("pointLights[0].diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
+        shader.setVec3("pointLights[0].specular", glm::vec3(0.0f, 0.0f, 0.0f));
+        shader.setFloat("pointLights[0].constant", 0.0f);
+        shader.setFloat("pointLights[0].linear", 0.0f);
+        shader.setFloat("pointLights[0].quadratic", 0.0f);
     }
-    shader.setVec3("spotLight.position", camera.Position);
-    shader.setVec3("spotLight.direction", camera.Front);
-    shader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-    shader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-    shader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-    shader.setFloat("spotLight.constant", 1.0f);
-    shader.setFloat("spotLight.linear", 0.09f);
-    shader.setFloat("spotLight.quadratic", 0.032f);
-    shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-    shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+
+    // shader.setVec3("spotLight.position", camera.Position);
+    // shader.setVec3("spotLight.direction", camera.Front);
+    // shader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+    // shader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+    // shader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+    // shader.setFloat("spotLight.constant", 1.0f);
+    // shader.setFloat("spotLight.linear", 0.09f);
+    // shader.setFloat("spotLight.quadratic", 0.032f);
+    // shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+    // shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly

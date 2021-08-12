@@ -53,7 +53,7 @@ void Model::processNode(aiNode *node, const aiScene *scene)
         // the node object only contains indices to index the actual objects in the scene.
         // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.emplace_back(processMesh(mesh, scene));
+        meshes.push_back(processMesh(mesh, scene));
     }
     // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
     for (unsigned int i = 0; i < node->mNumChildren; i++) {
@@ -104,7 +104,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
             vertex.TexCoords = glm::vec2(0.0f, 0.0f);
         }
 
-        vertices.emplace_back(vertex);
+        vertices.push_back(vertex);
     }
     // now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
     std::vector<unsigned int> indices;
@@ -113,7 +113,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         aiFace face = mesh->mFaces[i];
         // retrieve all indices of the face and store them in the indices vector
         for (unsigned int j = 0; j < face.mNumIndices; j++){
-            indices.emplace_back(face.mIndices[j]);
+            indices.push_back(face.mIndices[j]);
         }
     }
     // process materials
@@ -156,7 +156,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
         bool skip = false;
         for (auto &texture : textures_loaded) {
             if (std::strcmp(texture.path.data(), str.C_Str()) == 0) {
-                textures.emplace_back(texture);
+                textures.push_back(texture);
                 skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
                 break;
             }
@@ -167,8 +167,8 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
             typeName,
             str.C_Str(),
             };
-            textures.emplace_back(texture);
-            textures_loaded.emplace_back(
+            textures.push_back(texture);
+            textures_loaded.push_back(
                 texture); // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
         }
     }

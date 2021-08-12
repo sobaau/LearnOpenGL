@@ -97,6 +97,7 @@ void cubeDemo::draw(Camera const &camera, const glm::mat4 &projection, const glm
         model = glm::translate(model, pointLight.position);
         model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
         lightCubeShader.setMat4("model", model);
+        lightCubeShader.setVec3("diffuse",pointLight.diffuse);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
     glBindVertexArray(0);

@@ -2,6 +2,8 @@
 #include "entities/point_light.h"
 #include "entities/world_light.h"
 #include "imgui.h"
+#include "camera.h"
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/vec3.hpp>
 #include <imgui_impl_glfw.h>
@@ -25,13 +27,23 @@ debugUI::debugUI(GLFWwindow *window) : show_demo_window(true), show_another_wind
     ImGui_ImplOpenGL3_Init(glsl_version);
 }
 
-void debugUI::draw(GLFWwindow *window, std::vector<PointLight> &pointLights, WorldLight &worldLight)
+void debugUI::draw(GLFWwindow *window, std::vector<PointLight> &pointLights, WorldLight &worldLight, unsigned int fb, Camera &camera)
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     menu_bar(window);
-    world_light(pointLights[0].diffuse, worldLight);
+    ImGui::Begin("GameWindow");
+    {
+        ImGui::SetNextWindowSize(ImVec2(800,600),ImGuiCond_Always);
+        ImGui::BeginChild("GameRender");
+        ImVec2 wsize = ImGui::GetWindowSize();
+        // Because I use the texture from OpenGL, I need to invert the V from the UV.
+        ImGui::Image((ImTextureID)fb, wsize, ImVec2(0, 1), ImVec2(1, 0));
+        ImGui::EndChild();
+    }
+    ImGui::End();
+    world_light(worldLight);
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
     if (show_demo_window) {
         ImGui::ShowDemoWindow(&show_demo_window);
@@ -46,15 +58,27 @@ void debugUI::draw(GLFWwindow *window, std::vector<PointLight> &pointLights, Wor
             if (ImGui::TreeNode((void *)(intptr_t)i, "%s", pointLights[i].name.c_str())) {
                 if (ImGui::SmallButton("Edit")) {
                     light = i;
-                    open = !open;
+                    open = true;
                 }
+                ImGui::SameLine();
+                if (ImGui::SmallButton("Delete")) {
+                    open = false;
+                    pointLights.erase(pointLights.begin() + i);
+                }
+                ImGui::SameLine();
+                if (ImGui::SmallButton("Move to Camera")) {
+                    pointLights[i].position = camera.Position;
+                }
+                ImGui::Text("Size is %i", pointLights.size());
                 ImGui::TreePop();
             }
         }
         ImGui::TreePop();
     }
     if (open) {
-        editLight(pointLights[light]);
+        if(light < pointLights.size()){
+            editLight(pointLights[light]);
+        }
     }
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -66,12 +90,12 @@ void debugUI::editLight(PointLight &light)
     ImGui::Begin(light.name.c_str());
     ImGui::SliderFloat3("Ambient", &light.ambient.x, 0.0f, 1.0f);
     ImGui::SliderFloat3("Position", &light.position.x, -100.f, 100.f);
-    ImGui::PushItemWidth(100.f); 
-    ImGui::InputScalar("x", ImGuiDataType_Float ,&light.position.x, &step);
+    ImGui::PushItemWidth(100.f);
+    ImGui::InputScalar("x", ImGuiDataType_Float, &light.position.x, &step);
     ImGui::SameLine();
-    ImGui::InputScalar("y", ImGuiDataType_Float ,&light.position.y, &step);
-    ImGui::SameLine();    
-    ImGui::InputScalar("z", ImGuiDataType_Float ,&light.position.z, &step);
+    ImGui::InputScalar("y", ImGuiDataType_Float, &light.position.y, &step);
+    ImGui::SameLine();
+    ImGui::InputScalar("z", ImGuiDataType_Float, &light.position.z, &step);
     ImGui::PopItemWidth();
     ImGui::SliderFloat3("Specular", &light.specular.x, 0.0f, 1.0f);
     ImGui::SliderFloat("constant", &light.constant, 0.0f, 1.0f);
@@ -116,7 +140,7 @@ void debugUI::menu_bar(GLFWwindow *window)
     }
 }
 
-void debugUI::world_light(glm::vec3 &colour, WorldLight &worldLight)
+void debugUI::world_light(WorldLight &worldLight)
 {
     ImGui::Begin("World Light");
     ImGui::SliderFloat3("Ambient", &worldLight.ambient.x, 0.0f, 1.0f);

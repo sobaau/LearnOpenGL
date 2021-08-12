@@ -30,7 +30,7 @@ struct PointLight {
 in vec3 Normal;  
 in vec3 FragPos;
 in vec2 TexCoords;
-
+uniform int LightPoints;
 uniform Material material;
 uniform vec3 viewPos;
 uniform PointLight pointLights[NR_POINT_LIGHTS];
@@ -50,7 +50,7 @@ void main()
     // phase 1: Directional lighting
     vec3 result = CalcDirLight(dirLight, norm, viewDir);
     // phase 2: Point lights
-    for(int i = 0; i < NR_POINT_LIGHTS; i++)
+    for(int i = 0; i < LightPoints; i++)
         result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);    
     // phase 3: Spot light
     //result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
@@ -84,7 +84,9 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    //float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    vec3 halfwayDir = normalize(lightDir + viewDir);  
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
     // attenuation
     float distance    = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + 
