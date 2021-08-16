@@ -25,7 +25,9 @@ class debugUI
     void world_light(WorldLight &worldLight);
 public:
     explicit debugUI(GLFWwindow *window);
+    void renderViewPort(GLFWwindow *window, unsigned int fb);
     void shutdown();
     void draw(GLFWwindow *window, std::vector<PointLight> &pointLights, WorldLight &worldLight, unsigned int fb, Camera &camera);
     void editLight(PointLight &light);
+    void lightList(std::vector<PointLight> &pointLights, Camera &camera);
 };

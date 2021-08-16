@@ -15,7 +15,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
-GlobalSettings globalSettings{//NOLINT
+GlobalSettings globalSettings {//NOLINT
                               .SCR_WIDTH = 1680,
                               .SCR_HEIGHT = 1050,
                               .lastX = static_cast<double>(1280 / 2.0),

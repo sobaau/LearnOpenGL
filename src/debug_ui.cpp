@@ -1,10 +1,10 @@
 #include "debug_ui.h"
+#include "camera.h"
 #include "entities/point_light.h"
 #include "entities/world_light.h"
 #include "imgui.h"
-#include "camera.h"
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 #include <glm/vec3.hpp>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -31,23 +31,55 @@ void debugUI::draw(GLFWwindow *window, std::vector<PointLight> &pointLights, Wor
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-    menu_bar(window);
-    ImGui::Begin("GameWindow");
-    {
-        ImGui::SetNextWindowSize(ImVec2(800,600),ImGuiCond_Always);
-        ImGui::BeginChild("GameRender");
-        ImVec2 wsize = ImGui::GetWindowSize();
-        // Because I use the texture from OpenGL, I need to invert the V from the UV.
-        ImGui::Image((ImTextureID)fb, wsize, ImVec2(0, 1), ImVec2(1, 0));
-        ImGui::EndChild();
-    }
-    ImGui::End();
     world_light(worldLight);
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
     if (show_demo_window) {
         ImGui::ShowDemoWindow(&show_demo_window);
     }
+    lightList(pointLights, camera);
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void debugUI::renderViewPort(GLFWwindow *window, unsigned int fb)
+{
+    ImGui::NewFrame();
+    menu_bar(window);
+    ImGui::Begin("GameWindow");
+    {
+        ImGui::SetNextWindowSize(ImVec2(800, 600), ImGuiCond_Always);
+        ImGui::BeginChild("GameRender");
+        ImVec2 wsize = ImGui::GetWindowSize();
+        ImGui::Image((ImTextureID)fb, wsize, ImVec2(0, 1), ImVec2(1, 0));
+        ImGui::EndChild();
+    }
+    ImGui::End();
+}
+
+void debugUI::editLight(PointLight &light)
+{
+    float step = .1f;
+    ImGui::Begin(light.name.c_str());
+    ImGui::SliderFloat3("Ambient", &light.ambient.x, 0.0f, 1.0f);
+    ImGui::SliderFloat3("Position", &light.position.x, -100.f, 100.f);
+    ImGui::PushItemWidth(100.f);
+    ImGui::InputScalar("x", ImGuiDataType_Float, &light.position.x, &step);
+    ImGui::SameLine();
+    ImGui::InputScalar("y", ImGuiDataType_Float, &light.position.y, &step);
+    ImGui::SameLine();
+    ImGui::InputScalar("z", ImGuiDataType_Float, &light.position.z, &step);
+    ImGui::PopItemWidth();
+    ImGui::SliderFloat3("Specular", &light.specular.x, 0.0f, 1.0f);
+    ImGui::SliderFloat("constant", &light.constant, 0.0f, 1.0f);
+    ImGui::SliderFloat("linear", &light.linear, 0.0f, 1.0f);
+    ImGui::SliderFloat("quadratic", &light.quadratic, 0.0f, 1.0f);
+    ImGui::SliderFloat3("Colour", &light.diffuse.x, 0.0f, 1.0f);
+    ImGui::ColorEdit3("clear color", &light.diffuse.x);
+    ImGui::End();
+}
+
+void debugUI::lightList(std::vector<PointLight> &pointLights, Camera &camera)
+{
     if (ImGui::TreeNode("Point Lights")) {
         for (int i = 0; i < pointLights.size(); i++) {
             // Use SetNextItemOpen() so set the default state of a node to be open. We could
@@ -76,41 +108,10 @@ void debugUI::draw(GLFWwindow *window, std::vector<PointLight> &pointLights, Wor
         ImGui::TreePop();
     }
     if (open) {
-        if(light < pointLights.size()){
+        if (light < pointLights.size()) {
             editLight(pointLights[light]);
         }
     }
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-void debugUI::editLight(PointLight &light)
-{
-    float step = .1f;
-    ImGui::Begin(light.name.c_str());
-    ImGui::SliderFloat3("Ambient", &light.ambient.x, 0.0f, 1.0f);
-    ImGui::SliderFloat3("Position", &light.position.x, -100.f, 100.f);
-    ImGui::PushItemWidth(100.f);
-    ImGui::InputScalar("x", ImGuiDataType_Float, &light.position.x, &step);
-    ImGui::SameLine();
-    ImGui::InputScalar("y", ImGuiDataType_Float, &light.position.y, &step);
-    ImGui::SameLine();
-    ImGui::InputScalar("z", ImGuiDataType_Float, &light.position.z, &step);
-    ImGui::PopItemWidth();
-    ImGui::SliderFloat3("Specular", &light.specular.x, 0.0f, 1.0f);
-    ImGui::SliderFloat("constant", &light.constant, 0.0f, 1.0f);
-    ImGui::SliderFloat("linear", &light.linear, 0.0f, 1.0f);
-    ImGui::SliderFloat("quadratic", &light.quadratic, 0.0f, 1.0f);
-    ImGui::SliderFloat3("Colour", &light.diffuse.x, 0.0f, 1.0f);
-    ImGui::ColorEdit3("clear color", &light.diffuse.x);
-    ImGui::End();
-}
-
-void debugUI::shutdown()
-{
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
 }
 
 void debugUI::menu_bar(GLFWwindow *window)
@@ -149,4 +150,11 @@ void debugUI::world_light(WorldLight &worldLight)
     ImGui::SliderFloat3("Diffuse", &worldLight.diffuse.x, 0.0f, 1.0f); // Edit 1 float using a slider from 0.0f to 1.0f
     ImGui::ColorEdit3("clear color", &worldLight.diffuse.x);
     ImGui::End();
+}
+
+void debugUI::shutdown()
+{
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
