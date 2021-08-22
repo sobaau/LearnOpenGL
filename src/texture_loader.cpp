@@ -5,7 +5,7 @@
 #include <stb_image.h>
 #include <string>
 
-auto loadTexture(std::string_view path) -> unsigned int
+auto load_texture(std::string_view path) -> unsigned int
 {
     unsigned int textureID = 0;
     glGenTextures(1, &textureID);
@@ -44,7 +44,7 @@ auto loadTexture(std::string_view path) -> unsigned int
     return textureID;
 }
 
-unsigned int TextureFromFile(std::string filename, std::string const &directory)
+unsigned int texture_from_file(std::string filename, std::string const &directory)
 {
     filename = directory + '/' + filename;
 
@@ -84,7 +84,7 @@ unsigned int TextureFromFile(std::string filename, std::string const &directory)
 
     return textureID;
 }
-unsigned int loadCubemap(std::vector<std::string> &faces)
+unsigned int load_cubemap(std::vector<std::string> &faces)
 {
     unsigned int textureID = 0;
     glGenTextures(1, &textureID);

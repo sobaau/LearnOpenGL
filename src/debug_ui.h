@@ -8,7 +8,7 @@
 struct WorldLight;
 struct PointLight;
 struct Camera;
-class debugUI
+class DebugUI
 {
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -23,11 +23,13 @@ class debugUI
     ImVec4 clear_color;
     static void menu_bar(GLFWwindow *window);
     void world_light(WorldLight &worldLight);
+    void docking_space();
+    void edit_light(PointLight &light);
+    void light_list(std::vector<PointLight> &pointLights, Camera &camera);
+    void render_viewport(GLFWwindow *window, unsigned int fb);
+    
 public:
-    explicit debugUI(GLFWwindow *window);
-    void renderViewPort(GLFWwindow *window, unsigned int fb);
+    explicit DebugUI(GLFWwindow *window);
     void shutdown();
     void draw(GLFWwindow *window, std::vector<PointLight> &pointLights, WorldLight &worldLight, unsigned int fb, Camera &camera);
-    void editLight(PointLight &light);
-    void lightList(std::vector<PointLight> &pointLights, Camera &camera);
 };

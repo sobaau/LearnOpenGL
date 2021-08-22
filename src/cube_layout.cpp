@@ -1,6 +1,6 @@
 #include "cube_layout.h"
 
-cubeLayout::cubeLayout() :
+CubeLayout::CubeLayout() :
                     vertices({
                         -0.5f, -0.5f, -0.5f,
                         0.5f, 0.5f, -0.5f,

@@ -44,13 +44,13 @@ public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 
     // render the mesh
-    void Draw(Shader &shader);
+    void draw(Shader &shader);
 
 private:
     // render data
 
     // initializes all the buffer objects/arrays
-    void setupMesh();
+    void setup_mesh();
 };
 
 #endif // MESH_H_

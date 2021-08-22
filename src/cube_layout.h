@@ -1,13 +1,13 @@
 #include <vector>
 
-class cubeLayout
+class CubeLayout
 {
 
 public:
     std::vector<float> vertices;
     std::vector<float> normals;
     std::vector<float> textures;
-    cubeLayout();
+    CubeLayout();
     unsigned long verticesSize;
     unsigned long normalsSize;
     unsigned long texSize;

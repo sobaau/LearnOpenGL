@@ -15,7 +15,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
-GlobalSettings globalSettings {//NOLINT
+GlobalSettings globalSettings{//NOLINT
                               .SCR_WIDTH = 1680,
                               .SCR_HEIGHT = 1050,
                               .lastX = static_cast<double>(1280 / 2.0),
@@ -26,7 +26,6 @@ GlobalSettings globalSettings {//NOLINT
                               .processMouse = true,
                               .debug = false};
 static Camera camera(glm::vec3(0.0f, 0.0f, 0.0f)); //NOLINT
-
 int main()
 {
     // glfw: initialize and configure
@@ -53,7 +52,7 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
-    glfwSetKeyCallback(window, key_callback);
+    //glfwSetKeyCallback(window, key_callback);
     // tell GLFW to capture our mouse
     //glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -74,22 +73,7 @@ int main()
     glEnable(GL_MULTISAMPLE);
 
     //stbi_set_flip_vertically_on_load(true);
-    Shader sponzaShader("shaders/shader.vert", "shaders/light.frag");
-    Model sponzaModel("sponza/sponza.obj");
-    Shader screenShader("shaders/screen.vert", "shaders/screen.frag");
-    Shader geoShader("shaders/geo.vert", "shaders/geo.geom", "shaders/geo.frag");
-    screenShader.use();
-    screenShader.setInt("screenTexture", 0);
 
-    debugUI demoWindow(window);
-
-    std::vector<glm::vec3> grassLocations;
-    grassLocations.reserve(5);
-    grassLocations.emplace_back(-1.5f, 0.0f, -0.48f);
-    grassLocations.emplace_back(1.5f, 0.0f, 0.51f);
-    grassLocations.emplace_back(0.0f, 0.0f, 0.7f);
-    grassLocations.emplace_back(-0.3f, 0.0f, -2.3f);
-    grassLocations.emplace_back(0.5f, 0.0f, -0.6f);
     std::vector<float> points{
         -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, // top-left
         0.5f, 0.5f, 0.0f, 1.0f, 0.0f,  // top-right
@@ -132,11 +116,49 @@ int main()
         std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    unsigned int depthMapFBO;
+    glGenFramebuffers(1, &depthMapFBO);
+    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+
+    unsigned int depthMap;
+    glGenTextures(1, &depthMap);
+    glBindTexture(GL_TEXTURE_2D, depthMap);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+                 SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    Shader sponzaShader("shaders/shader.vert", "shaders/light.frag");
+    Model sponzaModel("sponza/sponza.obj");
+    Shader screenShader("shaders/screen.vert", "shaders/screen.frag");
+    Shader geoShader("shaders/geo.vert", "shaders/geo.geom", "shaders/geo.frag");
+    screenShader.use();
+    screenShader.set_int("screenTexture", 0);
+
+    DebugUI debugUI(window);
+
+    std::vector<glm::vec3> grassLocations;
+    grassLocations.reserve(5);
+    grassLocations.emplace_back(-1.5f, 0.0f, -0.48f);
+    grassLocations.emplace_back(1.5f, 0.0f, 0.51f);
+    grassLocations.emplace_back(0.0f, 0.0f, 0.7f);
+    grassLocations.emplace_back(-0.3f, 0.0f, -2.3f);
+    grassLocations.emplace_back(0.5f, 0.0f, -0.6f);
+
     Grass grass(grassLocations);
-    cubeDemo cubes;
+    CubeDemo cubes;
     SkyBox skyBox;
     ReflCube reflCube;
     AsteroidDemo as;
+
     WorldLight wLight("World Light",
                       {-0.2f, -1.0f, -0.3f}, {0.05f, 0.05f, 0.05f},
                       {0.4f, 0.4f, 0.4f}, {0.5f, 0.5f, 0.5f});
@@ -169,6 +191,8 @@ int main()
                                         {1.0f, 1.0f, 1.0f}));
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    bool mKeyPressed = false;
+
     while (!glfwWindowShouldClose(window)) {
         // per-frame time logic
         // --------------------
@@ -177,43 +201,26 @@ int main()
         globalSettings.lastFrame = currentFrame;
         // input
         // -----
-        processInput(window);
+        process_input(window, mKeyPressed);
         // render
         // ------
         // clear all relevant buffers
-        glClearColor(0.0f, 0.0f, 0.0f,0.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // 1. first render to depth map
+        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        render_scene(sponzaShader, sponzaModel, cubes, reflCube, as, grass, wLight, pointLights, skyBox);
+        // 2. then render scene as normal with shadow mapping (using depth map)
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glViewport(0, 0, globalSettings.SCR_WIDTH, globalSettings.SCR_HEIGHT);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(globalSettings.SCR_WIDTH) / static_cast<float>(globalSettings.SCR_HEIGHT), 0.1f, 100.0f);
-        auto view = camera.GetViewMatrix();
-        renderLights(as.planetShader, pointLights, wLight);
-        renderLights(as.asteroidShader, pointLights, wLight);
-        as.Draw(projection, view);
-        renderLights(cubes.getShader(), pointLights, wLight);
-        cubes.draw(camera, projection, view, pointLights, wLight);
-        renderLights(sponzaShader, pointLights, wLight);
-        // view/projection transformations
-        sponzaShader.setMat4("projection", projection);
-        sponzaShader.setMat4("view", view);
-        // render the loaded model
-        auto model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
-        sponzaShader.setMat4("model", model);
-        sponzaModel.Draw(sponzaShader);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.skyTexture);
-        reflCube.draw(view, projection, camera);
-        view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
-        skyBox.draw(view, projection);
-        view = camera.GetViewMatrix();
-        grass.Draw(projection, view, camera.Position);
-
+        glBindTexture(GL_TEXTURE_2D, depthMap);
+        render_scene(sponzaShader, sponzaModel, cubes, reflCube, as, grass, wLight, pointLights, skyBox);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         //if (globalSettings.debug) {
-        demoWindow.draw(window, pointLights, wLight, fb_tex, camera);
+        debugUI.draw(window, pointLights, wLight, fb_tex, camera);
         //}
 
         glfwSwapBuffers(window);
@@ -222,17 +229,47 @@ int main()
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
-    grass.cleanUp();
+    grass.clean_up();
     glfwTerminate();
     return 0;
 }
-
-void renderLights(const Shader &shader, std::vector<PointLight> &pointLights, WorldLight &worldLight)
+void render_scene(Shader &sponzaShader, Model &sponzaModel, CubeDemo &cubes, ReflCube &reflCube, AsteroidDemo &as, Grass &grass, WorldLight &wLight, std::vector<PointLight> &pointLights, SkyBox &skyBox)
 {
-    shader.use();
-    shader.setInt("material.diffuse", 0);
-    shader.setInt("material.specular", 1);
-    shader.setFloat("material.shininess", 32.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(globalSettings.SCR_WIDTH) / static_cast<float>(globalSettings.SCR_HEIGHT), 0.1f, 100.0f);
+    auto view = camera.get_view_matrix();
+    render_lights(as.planetShader, pointLights, wLight);
+    render_lights(as.asteroidShader, pointLights, wLight);
+    as.draw(projection, view);
+    render_lights(cubes.get_shader(), pointLights, wLight);
+    cubes.draw(camera, projection, view, pointLights, wLight);
+    render_lights(sponzaShader, pointLights, wLight);
+    // view/projection transformations
+    sponzaShader.set_mat4("projection", projection);
+    sponzaShader.set_mat4("view", view);
+    // render the loaded model
+    auto model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f)); // translate it down so it's at the center of the scene
+    model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
+    sponzaShader.set_mat4("model", model);
+    sponzaModel.draw(sponzaShader);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.skyTexture);
+    reflCube.draw(view, projection, camera);
+    view = glm::mat4(glm::mat3(camera.get_view_matrix()));
+    skyBox.draw(view, projection);
+    view = camera.get_view_matrix();
+    //renderLights(grass.grassShader, pointLights, wLight);
+    grass.draw(projection, view, camera.Position);
+
+}
+
+void render_lights(const Shader &ourShader, std::vector<PointLight> &pointLights, WorldLight &worldLight)
+{
+    ourShader.use();
+    ourShader.set_int("material.diffuse", 0);
+    ourShader.set_int("material.specular", 1);
+    ourShader.set_float("material.shininess", 32.0f);
     /*
            Here we set all the uniforms for the 5/6 types of lights we have. We have to set them manually and index
            the proper PointLight struct in the array to set each uniform variable. This can be done more code-friendly
@@ -240,29 +277,29 @@ void renderLights(const Shader &shader, std::vector<PointLight> &pointLights, Wo
            by using 'Uniform buffer objects', but that is something we'll discuss in the 'Advanced GLSL' tutorial.
         */
     // directional light
-    shader.setVec3("dirLight.direction", worldLight.direction);
-    shader.setVec3("dirLight.ambient", worldLight.ambient);
-    shader.setVec3("dirLight.diffuse", worldLight.diffuse);
-    shader.setVec3("dirLight.specular", worldLight.specular);
+    ourShader.set_vec3("dirLight.direction", worldLight.direction);
+    ourShader.set_vec3("dirLight.ambient", worldLight.ambient);
+    ourShader.set_vec3("dirLight.diffuse", worldLight.diffuse);
+    ourShader.set_vec3("dirLight.specular", worldLight.specular);
     if (!pointLights.empty()) {
         for (unsigned long i = 0; i < pointLights.size(); i++) {
-            shader.setVec3("pointLights[" + std::to_string(i) + "].position", pointLights[i].position);
-            shader.setVec3("pointLights[" + std::to_string(i) + "].ambient", pointLights[i].ambient);
-            shader.setVec3("pointLights[" + std::to_string(i) + "].diffuse", pointLights[i].diffuse);
-            shader.setVec3("pointLights[" + std::to_string(i) + "].specular", pointLights[i].specular);
-            shader.setFloat("pointLights[" + std::to_string(i) + "].constant", pointLights[i].constant);
-            shader.setFloat("pointLights[" + std::to_string(i) + "].linear", pointLights[i].linear);
-            shader.setFloat("pointLights[" + std::to_string(i) + "].quadratic", pointLights[i].quadratic);
-            shader.setInt("LightPoints", static_cast<int>(pointLights.size()));
+            ourShader.set_vec3("pointLights[" + std::to_string(i) + "].position", pointLights[i].position);
+            ourShader.set_vec3("pointLights[" + std::to_string(i) + "].ambient", pointLights[i].ambient);
+            ourShader.set_vec3("pointLights[" + std::to_string(i) + "].diffuse", pointLights[i].diffuse);
+            ourShader.set_vec3("pointLights[" + std::to_string(i) + "].specular", pointLights[i].specular);
+            ourShader.set_float("pointLights[" + std::to_string(i) + "].constant", pointLights[i].constant);
+            ourShader.set_float("pointLights[" + std::to_string(i) + "].linear", pointLights[i].linear);
+            ourShader.set_float("pointLights[" + std::to_string(i) + "].quadratic", pointLights[i].quadratic);
+            ourShader.set_int("LightPoints", static_cast<int>(pointLights.size()));
         }
     } else {
-        shader.setVec3("pointLights[0].position", glm::vec3(0.0f, 0.0f, 0.0f));
-        shader.setVec3("pointLights[0].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-        shader.setVec3("pointLights[0].diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
-        shader.setVec3("pointLights[0].specular", glm::vec3(0.0f, 0.0f, 0.0f));
-        shader.setFloat("pointLights[0].constant", 0.0f);
-        shader.setFloat("pointLights[0].linear", 0.0f);
-        shader.setFloat("pointLights[0].quadratic", 0.0f);
+        ourShader.set_vec3("pointLights[0].position", glm::vec3(0.0f, 0.0f, 0.0f));
+        ourShader.set_vec3("pointLights[0].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
+        ourShader.set_vec3("pointLights[0].diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
+        ourShader.set_vec3("pointLights[0].specular", glm::vec3(0.0f, 0.0f, 0.0f));
+        ourShader.set_float("pointLights[0].constant", 0.0f);
+        ourShader.set_float("pointLights[0].linear", 0.0f);
+        ourShader.set_float("pointLights[0].quadratic", 0.0f);
     }
 
     // shader.setVec3("spotLight.position", camera.Position);
@@ -279,31 +316,28 @@ void renderLights(const Shader &shader, std::vector<PointLight> &pointLights, Wo
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
+void process_input(GLFWwindow *window, bool &mKeyPressed)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        camera.ProcessKeyboard(FORWARD, globalSettings.deltaTime);
+        camera.process_keyboard(FORWARD, globalSettings.deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        camera.ProcessKeyboard(BACKWARD, globalSettings.deltaTime);
+        camera.process_keyboard(BACKWARD, globalSettings.deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        camera.ProcessKeyboard(LEFT, globalSettings.deltaTime);
+        camera.process_keyboard(LEFT, globalSettings.deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        camera.ProcessKeyboard(RIGHT, globalSettings.deltaTime);
+        camera.process_keyboard(RIGHT, globalSettings.deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        camera.ProcessKeyboard(UP, globalSettings.deltaTime);
+        camera.process_keyboard(UP, globalSettings.deltaTime);
     }
-}
-
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_M && action == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS && !mKeyPressed) {
+        mKeyPressed = true;
         if (globalSettings.processMouse) {
             globalSettings.processMouse = false;
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -312,8 +346,8 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }
     }
-    if (key == GLFW_KEY_GRAVE_ACCENT && action == GLFW_PRESS) {
-        globalSettings.debug = !globalSettings.debug;
+    if (glfwGetKey(window, GLFW_KEY_M) == GLFW_RELEASE) {
+        mKeyPressed = false;
     }
 }
 
@@ -340,7 +374,7 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
     globalSettings.lastX = xpos;
     globalSettings.lastY = ypos;
     if (globalSettings.processMouse) {
-        camera.ProcessMouseMovement(xoffset, yoffset, true);
+        camera.process_mouse_movement(xoffset, yoffset, true);
     }
 }
 
@@ -348,5 +382,5 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 // ----------------------------------------------------------------------
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 {
-    camera.ProcessMouseScroll(static_cast<float>(yoffset));
+    camera.process_mouse_scroll(static_cast<float>(yoffset));
 }

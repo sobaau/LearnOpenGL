@@ -73,27 +73,27 @@ AsteroidDemo::AsteroidDemo() : asteroidShader("shaders/asteroid.vert", "shaders/
     }
 }
 
-void AsteroidDemo::Draw(glm::mat4 &projection, glm::mat4 &view)
+void AsteroidDemo::draw(glm::mat4 &projection, glm::mat4 &view)
 {
 
     planetShader.use();
-    planetShader.setMat4("projection", projection);
-    planetShader.setMat4("view", view);
+    planetShader.set_mat4("projection", projection);
+    planetShader.set_mat4("view", view);
 
     // draw planet
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
     model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
-    planetShader.setMat4("model", model);
-    planet.Draw(planetShader);
+    planetShader.set_mat4("model", model);
+    planet.draw(planetShader);
 
     // draw meteorites
     asteroidShader.use();
-    asteroidShader.setMat4("projection", projection);
-    asteroidShader.setMat4("view", view);
+    asteroidShader.set_mat4("projection", projection);
+    asteroidShader.set_mat4("view", view);
     //asteroidShader.setInt("texture_diffuse1", 0);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, rock.textures_loaded[0].id);
+    glBindTexture(GL_TEXTURE_2D, rock.texturesLoaded[0].id);
     for (auto const &m : rock.meshes) {
         glBindVertexArray(m.VAO);
         glDrawElementsInstanced(

@@ -15,10 +15,10 @@ Grass::Grass(std::vector<glm::vec3> loc)
                            0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
                            1.0f, -0.5f, 0.0f, 1.0f, 1.0f,
                            1.0f, 0.5f, 0.0f, 1.0f, 0.0f}),
-      grassShader("shaders/grass.vert", "shaders/grass.frag"),
-      grassTexture(loadTexture("textures/grass.png")),
+      grassTexture(load_texture("textures/grass.png")),
       grassVAO(0),
       grassVBO(0),
+      grassShader("shaders/grass.vert", "shaders/grass.frag"),
       locations(std::move(loc))
 {
     glGenVertexArrays(1, &grassVAO);
@@ -33,16 +33,16 @@ Grass::Grass(std::vector<glm::vec3> loc)
     glEnableVertexAttribArray(0);
     glBindVertexArray(0);
     grassShader.use();
-    grassShader.setInt("texture1", 0);
+    grassShader.set_int("texture1", 0);
 }
 
-void Grass::cleanUp()
+void Grass::clean_up()
 {
     glDeleteVertexArrays(1, &grassVAO);
     glDeleteBuffers(1, &grassVBO);
 }
 
-void Grass::Draw(glm::mat4 projection, glm::mat4 view, glm::vec3 cameraPos)
+void Grass::draw(glm::mat4 projection, glm::mat4 view, glm::vec3 cameraPos)
 {
     glDisable(GL_CULL_FACE);
     glActiveTexture(GL_TEXTURE0);
@@ -51,8 +51,8 @@ void Grass::Draw(glm::mat4 projection, glm::mat4 view, glm::vec3 cameraPos)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glBindVertexArray(grassVAO);
     grassShader.use();
-    grassShader.setMat4("projection", projection);
-    grassShader.setMat4("view", view);
+    grassShader.set_mat4("projection", projection);
+    grassShader.set_mat4("view", view);
     for (auto &location : locations) {
         float distance = glm::length(cameraPos - location);
         sorted[distance] = location;
@@ -60,7 +60,7 @@ void Grass::Draw(glm::mat4 projection, glm::mat4 view, glm::vec3 cameraPos)
     for (auto it = sorted.rbegin(); it != sorted.rend(); ++it) {
         auto model = glm::mat4(1.0f);
         model = glm::translate(model, it->second);
-        grassShader.setMat4("model", model);
+        grassShader.set_mat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 

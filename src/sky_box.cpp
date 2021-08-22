@@ -53,7 +53,7 @@ SkyBox::SkyBox()
                       -1.0f, -1.0f, 1.0f,
                       1.0f, -1.0f, 1.0f}),
       skyBoxShader("shaders/sky_box.vert", "shaders/sky_box.frag"),
-      skyTexture(loadCubemap(faces))
+      skyTexture(load_cubemap(faces))
 {
     glGenVertexArrays(1, &skyboxVAO);
     glGenBuffers(1, &skyboxVBO);
@@ -63,15 +63,15 @@ SkyBox::SkyBox()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void *>(nullptr));
     skyBoxShader.use();
-    skyBoxShader.setInt("skybox", 0);
+    skyBoxShader.set_int("skybox", 0);
 }
 
 void SkyBox::draw(const glm::mat4 &view, const glm::mat4 &projection)
 {
     glDepthFunc(GL_LEQUAL); // change depth function so depth test passes when values are equal to depth buffer's content
     skyBoxShader.use();
-    skyBoxShader.setMat4("view", view);
-    skyBoxShader.setMat4("projection", projection);
+    skyBoxShader.set_mat4("view", view);
+    skyBoxShader.set_mat4("projection", projection);
     glBindVertexArray(skyboxVAO);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skyTexture);
     constexpr auto nVertex = 36;

@@ -56,19 +56,19 @@ ReflCube::ReflCube()
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<const void *>(3 * sizeof(float)));
     reflShader.use();
-    reflShader.setInt("skybox", 0);
+    reflShader.set_int("skybox", 0);
 }
 
 void ReflCube::draw(glm::mat4 &view, glm::mat4 &projection, Camera &camera)
 {
     glDisable(GL_CULL_FACE);
     reflShader.use();
-    reflShader.setVec3("cameraPos", camera.Position);
-    reflShader.setMat4("view", view);
-    reflShader.setMat4("projection", projection);
+    reflShader.set_vec3("cameraPos", camera.Position);
+    reflShader.set_mat4("view", view);
+    reflShader.set_mat4("projection", projection);
     auto model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(1.0f, 1.0f, 1.0f));
-    reflShader.setMat4("model", model);
+    reflShader.set_mat4("model", model);
     glBindVertexArray(RVAO);
     const int nVertex = static_cast<int>(vertices.size()) / 3;
     glDrawArrays(GL_TRIANGLES, 0, nVertex);

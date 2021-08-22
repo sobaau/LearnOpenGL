@@ -17,7 +17,7 @@ class AsteroidDemo
 
 public:
     AsteroidDemo();
-    void Draw(glm::mat4 &projection, glm::mat4 &view);
+    void draw(glm::mat4 &projection, glm::mat4 &view);
     Shader asteroidShader;
     Shader planetShader;
     Model rock;

@@ -7,7 +7,7 @@
 #include <vector>
 class Camera;
 
-class cubeDemo
+class CubeDemo
 {
     unsigned int VBO{0};
     unsigned int cubeVAO{0};
@@ -19,8 +19,8 @@ class cubeDemo
 public:
     const unsigned int diffuseMap;
     const unsigned int specularMap;
-    cubeDemo();
-    void cleanUp();
+    CubeDemo();
+    void clean_up();
     void draw(Camera const &camera, const glm::mat4 &projection, const glm::mat4 &view, const std::vector<PointLight> &pointLights, const WorldLight &worldLight);
-    [[nodiscard]] Shader getShader() const;
+    [[nodiscard]] Shader get_shader() const;
 };

@@ -13,19 +13,19 @@ class Shader;
 // constructor, expects a filepath to a 3D model.
 Model::Model(std::string const &path) : gamma(false), gammaCorrection(gamma)
 {
-    loadModel(path);
+    load_model(path);
 }
 
 // draws the model, and thus all its meshes
-void Model::Draw(Shader &shader)
+void Model::draw(Shader &shader)
 {
     for (auto &mesh : meshes){
-        mesh.Draw(shader);
+        mesh.draw(shader);
     }
 }
 
 // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
-void Model::loadModel(std::string const &path)
+void Model::load_model(std::string const &path)
 {
     // read file via ASSIMP
     Assimp::Importer importer;
@@ -42,26 +42,26 @@ void Model::loadModel(std::string const &path)
     directory = path.substr(0, path.find_last_of('/'));
 
     // process ASSIMP's root node recursively
-    processNode(scene->mRootNode, scene);
+    process_node(scene->mRootNode, scene);
 }
 
 // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
-void Model::processNode(aiNode *node, const aiScene *scene)
+void Model::process_node(aiNode *node, const aiScene *scene)
 {
     // process each mesh located at the current node
     for (unsigned int i = 0; i < node->mNumMeshes; i++) {
         // the node object only contains indices to index the actual objects in the scene.
         // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(mesh, scene));
+        meshes.push_back(process_mesh(mesh, scene));
     }
     // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
     for (unsigned int i = 0; i < node->mNumChildren; i++) {
-        processNode(node->mChildren[i], scene);
+        process_node(node->mChildren[i], scene);
     }
 }
 
-Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
+Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene)
 {
     // data to fill
     std::vector<Vertex> vertices;
@@ -127,16 +127,16 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 
     std::vector<Texture> textures;
     // 1. diffuse maps
-    std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+    std::vector<Texture> diffuseMaps = load_material_textures(material, aiTextureType_DIFFUSE, "texture_diffuse");
     textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
     // 2. specular maps
-    std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+    std::vector<Texture> specularMaps = load_material_textures(material, aiTextureType_SPECULAR, "texture_specular");
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     // 3. normal maps
-    std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+    std::vector<Texture> normalMaps = load_material_textures(material, aiTextureType_HEIGHT, "texture_normal");
     textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
     // 4. height maps
-    std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+    std::vector<Texture> heightMaps = load_material_textures(material, aiTextureType_AMBIENT, "texture_height");
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
     // return a mesh object created from the extracted mesh data
@@ -145,7 +145,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 
 // checks all material textures of a given type and loads the textures if they're not loaded yet.
 // the required info is returned as a Texture struct.
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string const &typeName)
+std::vector<Texture> Model::load_material_textures(aiMaterial *mat, aiTextureType type, std::string const &typeName)
 {
     std::vector<Texture> textures;
     textures.reserve(mat->GetTextureCount(type));
@@ -154,7 +154,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
         mat->GetTexture(type, i, &str);
         // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
         bool skip = false;
-        for (auto &texture : textures_loaded) {
+        for (auto &texture : texturesLoaded) {
             if (std::strcmp(texture.path.data(), str.C_Str()) == 0) {
                 textures.push_back(texture);
                 skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
@@ -163,12 +163,12 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
         }
         if (!skip) { // if texture hasn't been loaded already, load it
             Texture texture{
-            TextureFromFile(str.C_Str(), this->directory),
+                texture_from_file(str.C_Str(), this->directory),
             typeName,
             str.C_Str(),
             };
             textures.push_back(texture);
-            textures_loaded.push_back(
+            texturesLoaded.push_back(
                 texture); // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
         }
     }

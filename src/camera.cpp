@@ -13,7 +13,7 @@ Camera::Camera(glm::vec3 position) noexcept : Position(position),
                                      Zoom(ZOOM) 
 {
 
-    updateCameraVectors();
+    update_camera_vectors();
 }
 
 Camera::Camera(float posX, float posY, float posZ, float upX,
@@ -27,16 +27,16 @@ Camera::Camera(float posX, float posY, float posZ, float upX,
                                                                MouseSensitivity(SENSITIVITY),
                                                                Zoom(ZOOM)
 {
-    updateCameraVectors();
+    update_camera_vectors();
 }
 
 // returns the view matrix calculated using Euler Angles and the LookAt Matrix
-glm::mat4 Camera::GetViewMatrix() const
+glm::mat4 Camera::get_view_matrix() const
 {
     return glm::lookAt(Position, Position + Front, Up);
 }
 
-void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
+void Camera::process_keyboard(Camera_Movement direction, float deltaTime)
 {
     float velocity = MovementSpeed * deltaTime;
     if (direction == FORWARD){
@@ -57,7 +57,7 @@ void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
     //Position.y = 0.0f; // <-- this one-liner keeps the user at the ground level (xz plane)
 }
 
-void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
+void Camera::process_mouse_movement(float xoffset, float yoffset, GLboolean constrainPitch)
 {
     xoffset *= MouseSensitivity;
     yoffset *= MouseSensitivity;
@@ -75,10 +75,10 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
     }
 
     // update Front, Right and Up Vectors using the updated Euler angles
-    updateCameraVectors();
+    update_camera_vectors();
 }
 
-void Camera::ProcessMouseScroll(float yoffset)
+void Camera::process_mouse_scroll(float yoffset)
 {
     Zoom -= yoffset;
     if (Zoom < 1.0f){
@@ -89,7 +89,7 @@ void Camera::ProcessMouseScroll(float yoffset)
     }
 }
 
-void Camera::updateCameraVectors()
+void Camera::update_camera_vectors()
 {
     // calculate the new Front vector
     glm::vec3 front;

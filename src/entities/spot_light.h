@@ -12,6 +12,5 @@ struct SpotLight : public Light
     glm::vec3 quadratic;
     glm::vec3 cutOff;
     glm::vec3 outerCutOff;
-    SpotLight();
 };
 #endif // SPOT_LIGHT_H_

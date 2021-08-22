@@ -10,7 +10,7 @@
 #include <string> // for operator+, to_string
 #include <vector> // for allocator, vector
 
-cubeDemo::cubeDemo()
+CubeDemo::CubeDemo()
     : cubePositions({glm::vec3(0.0f, 0.0f, 0.0f),
                      glm::vec3(2.0f, 5.0f, -15.0f),
                      glm::vec3(-1.5f, -2.2f, -2.5f),
@@ -23,10 +23,10 @@ cubeDemo::cubeDemo()
                      glm::vec3(-1.3f, 1.0f, -1.5f)}),
       lightCubeShader("shaders/shader.vert", "shaders/light_cube.frag"),
       lightingShader("shaders/shader.vert", "shaders/light.frag"),
-      diffuseMap(loadTexture("textures/container2.png")),
-      specularMap(loadTexture("textures/container2_specular.png"))
+      diffuseMap(load_texture("textures/container2.png")),
+      specularMap(load_texture("textures/container2_specular.png"))
 {
-    cubeLayout cube;
+    CubeLayout cube;
     glGenVertexArrays(1, &cubeVAO);
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -52,19 +52,19 @@ cubeDemo::cubeDemo()
     glEnableVertexAttribArray(0);
     glBindVertexArray(0);
     lightingShader.use();
-    lightingShader.setInt("material.diffuse", 0);
-    lightingShader.setInt("material.specular", 1);
+    lightingShader.set_int("material.diffuse", 0);
+    lightingShader.set_int("material.specular", 1);
 }
 
-void cubeDemo::draw(Camera const &camera, const glm::mat4 &projection, const glm::mat4 &view, const std::vector<PointLight> &pointLights, const WorldLight &worldLight)
+void CubeDemo::draw(Camera const &camera, const glm::mat4 &projection, const glm::mat4 &view, const std::vector<PointLight> &pointLights, const WorldLight &worldLight)
 {
     // view/projection transformations
-    lightingShader.setMat4("projection", projection);
-    lightingShader.setMat4("view", view);
+    lightingShader.set_mat4("projection", projection);
+    lightingShader.set_mat4("view", view);
 
     // world transformation
     auto model = glm::mat4(1.0f);
-    lightingShader.setMat4("model", model);
+    lightingShader.set_mat4("model", model);
 
     // bind diffuse map
     glActiveTexture(GL_TEXTURE0);
@@ -80,14 +80,14 @@ void cubeDemo::draw(Camera const &camera, const glm::mat4 &projection, const glm
         // calculate the model matrix for each object and pass it to shader before drawing
         model = glm::mat4(1.0f);
         model = glm::translate(model, pos);
-        lightingShader.setMat4("model", model);
+        lightingShader.set_mat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 
     // also draw the lamp object(s)
     lightCubeShader.use();
-    lightCubeShader.setMat4("projection", projection);
-    lightCubeShader.setMat4("view", view);
+    lightCubeShader.set_mat4("projection", projection);
+    lightCubeShader.set_mat4("view", view);
     glBindVertexArray(0);
 
     // we now draw as many light bulbs as we have point lights.
@@ -96,19 +96,19 @@ void cubeDemo::draw(Camera const &camera, const glm::mat4 &projection, const glm
         model = glm::mat4(1.0f);
         model = glm::translate(model, pointLight.position);
         model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
-        lightCubeShader.setMat4("model", model);
-        lightCubeShader.setVec3("diffuse",pointLight.diffuse);
+        lightCubeShader.set_mat4("model", model);
+        lightCubeShader.set_vec3("diffuse", pointLight.diffuse);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
     glBindVertexArray(0);
 }
 
-Shader cubeDemo::getShader() const
+Shader CubeDemo::get_shader() const
 {
     return lightingShader;
 }
 
-void cubeDemo::cleanUp()
+void CubeDemo::clean_up()
 {
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
