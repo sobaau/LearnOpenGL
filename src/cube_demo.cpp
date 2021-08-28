@@ -7,7 +7,6 @@
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
-#include <string> // for operator+, to_string
 #include <vector> // for allocator, vector
 
 CubeDemo::CubeDemo()

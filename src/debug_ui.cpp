@@ -3,8 +3,8 @@
 #include "entities/point_light.h"
 #include "entities/world_light.h"
 #include "imgui.h"
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 #include <glm/vec3.hpp>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -48,8 +48,10 @@ void DebugUI::draw(GLFWwindow *window, std::vector<PointLight> &pointLights, Wor
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
-void DebugUI::docking_space(){
-        ImGuiViewport *viewport = ImGui::GetMainViewport();
+
+void DebugUI::docking_space()
+{
+    ImGuiViewport *viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->Pos);
     ImGui::SetNextWindowSize(viewport->Size);
     ImGui::SetNextWindowViewport(viewport->ID);
@@ -83,7 +85,7 @@ void DebugUI::render_viewport(GLFWwindow *window, unsigned int fb)
             1050.0f * ratio);
         auto a = ImVec2((wsize.x - renderSize.x) * 0.5f, (wsize.y - renderSize.y) * 0.5f);
         ImGui::SetCursorPos(a);
-        ImGui::Image((ImTextureID)fb, renderSize, ImVec2(0, 1), ImVec2(1, 0));
+        ImGui::Image(reinterpret_cast<ImTextureID>(fb), renderSize, ImVec2(0, 1), ImVec2(1, 0));
         ImGui::EndChild();
     }
     ImGui::End();
@@ -113,7 +115,7 @@ void DebugUI::light_list(std::vector<PointLight> &pointLights, Camera &camera)
                 if (ImGui::SmallButton("Move to Camera")) {
                     pointLights[i].position = camera.Position;
                 }
-                ImGui::Text("Size is %i", pointLights.size());
+                ImGui::Text("Size is %i", static_cast<int>(pointLights.size()));
                 ImGui::TreePop();
             }
         }

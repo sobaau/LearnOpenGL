@@ -47,8 +47,6 @@ public:
     void draw(Shader &shader);
 
 private:
-    // render data
-
     // initializes all the buffer objects/arrays
     void setup_mesh();
 };

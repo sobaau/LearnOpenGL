@@ -8,14 +8,15 @@ class Camera;
 
 class ReflCube
 {
+public:
+    ReflCube();
+    void draw(glm::mat4 &view, glm::mat4 &projection, Camera &camera);
+
+private:
     std::vector<float> vertices;
     Shader reflShader;
     unsigned int RVAO{0};
     unsigned int RVBO{0};
-
-public:
-    ReflCube();
-    void draw(glm::mat4 &view, glm::mat4 &projection, Camera &camera);
 };
 
 #endif // R_CUBE_H_

@@ -2,7 +2,6 @@
 
 class CubeLayout
 {
-
 public:
     std::vector<float> vertices;
     std::vector<float> normals;

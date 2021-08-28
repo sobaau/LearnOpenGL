@@ -11,10 +11,13 @@
 #include "r_cube.h"
 #include "shader.h"
 #include "sky_box.h"
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
+#include <string_view>
+
 GlobalSettings globalSettings{//NOLINT
                               .SCR_WIDTH = 1680,
                               .SCR_HEIGHT = 1050,
@@ -117,15 +120,15 @@ int main()
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    unsigned int depthMapFBO;
+    unsigned int depthMapFBO{};
     glGenFramebuffers(1, &depthMapFBO);
-    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-
-    unsigned int depthMap;
+    const unsigned int SHADOW_WIDTH = 1024;
+    const unsigned int SHADOW_HEIGHT = 1024;
+    unsigned int depthMap{};
     glGenTextures(1, &depthMap);
     glBindTexture(GL_TEXTURE_2D, depthMap);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-                 SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+                 SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -261,7 +264,6 @@ void render_scene(Shader &sponzaShader, Model &sponzaModel, CubeDemo &cubes, Ref
     view = camera.get_view_matrix();
     //renderLights(grass.grassShader, pointLights, wLight);
     grass.draw(projection, view, camera.Position);
-
 }
 
 void render_lights(const Shader &ourShader, std::vector<PointLight> &pointLights, WorldLight &worldLight)
