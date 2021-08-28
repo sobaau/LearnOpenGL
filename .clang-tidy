@@ -26,5 +26,5 @@ Checks: "*,
         -cppcoreguidelines-pro-type-vararg*,
         -misc-unused-parameters*"
 WarningsAsErrors: "-*"
-HeaderFilterRegex: ""
+HeaderFilterRegex: "*.h"
 FormatStyle: none

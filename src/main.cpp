@@ -4,7 +4,6 @@
 #include "cube_demo.h"
 #include "debug_ui.h"
 #include "entities/point_light.h"
-#include "entities/spot_light.h"
 #include "entities/world_light.h"
 #include "grass.h"
 #include "model.h"
@@ -13,21 +12,22 @@
 #include "sky_box.h"
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
-#include <string_view>
+#include <vector>
 
-GlobalSettings globalSettings{//NOLINT
-                              .SCR_WIDTH = 1680,
-                              .SCR_HEIGHT = 1050,
-                              .lastX = static_cast<double>(1280 / 2.0),
-                              .lastY = static_cast<double>(720 / 2.0),
-                              .firstMouse = true,
-                              .deltaTime = 0.0f,
-                              .lastFrame = 0.0f,
-                              .processMouse = true,
-                              .debug = false};
+GlobalSettings globalSettings{
+                              1680,
+                              1050,
+                              (1280.0 / 2.0),
+                              (720.0 / 2.0),
+                              true,
+                              0.0f,
+                              0.0f,
+                              true,
+                              false};
 static Camera camera(glm::vec3(0.0f, 0.0f, 0.0f)); //NOLINT
 int main()
 {
@@ -120,11 +120,11 @@ int main()
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    unsigned int depthMapFBO{};
+    unsigned int depthMapFBO{0};
     glGenFramebuffers(1, &depthMapFBO);
     const unsigned int SHADOW_WIDTH = 1024;
     const unsigned int SHADOW_HEIGHT = 1024;
-    unsigned int depthMap{};
+    unsigned int depthMap{0};
     glGenTextures(1, &depthMap);
     glBindTexture(GL_TEXTURE_2D, depthMap);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
@@ -257,7 +257,7 @@ void render_scene(Shader &sponzaShader, Model &sponzaModel, CubeDemo &cubes, Ref
     sponzaShader.set_mat4("model", model);
     sponzaModel.draw(sponzaShader);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.skyTexture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.get_texture());
     reflCube.draw(view, projection, camera);
     view = glm::mat4(glm::mat3(camera.get_view_matrix()));
     skyBox.draw(view, projection);

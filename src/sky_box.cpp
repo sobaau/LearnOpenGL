@@ -1,5 +1,6 @@
 #include "sky_box.h"
 #include "texture_loader.h"
+#include <string>
 #include <glad/glad.h>
 
 SkyBox::SkyBox()
@@ -77,4 +78,7 @@ void SkyBox::draw(const glm::mat4 &view, const glm::mat4 &projection)
     constexpr auto nVertex = 36;
     glDrawArrays(GL_TRIANGLES, 0, nVertex);
     glDepthFunc(GL_LESS); // set depth function back to default
+}
+unsigned int SkyBox::get_texture(){
+    return skyTexture;
 }
