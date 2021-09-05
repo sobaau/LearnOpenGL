@@ -5,7 +5,7 @@
 #include <stb_image.h>
 #include <string>
 
-auto load_texture(std::string_view path) -> unsigned int
+unsigned int load_texture(std::string_view path)
 {
     unsigned int textureID = 0;
     glGenTextures(1, &textureID);

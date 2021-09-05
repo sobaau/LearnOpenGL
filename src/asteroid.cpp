@@ -12,10 +12,10 @@
 #include <utility>
 #include <glad/glad.h>
 
-AsteroidDemo::AsteroidDemo() : asteroidShader("shaders/asteroid.vert", "shaders/light.frag"),
-                               planetShader("shaders/shader.vert", "shaders/light.frag"),
-                               rock("rock/rock.obj"),
-                               planet("planet/planet.obj")
+AsteroidDemo::AsteroidDemo() : asteroidShader("../assets/shaders/asteroid.vert", "../assets/shaders/light.frag"),
+                               planetShader("../assets/shaders/shader.vert", "../assets/shaders/light.frag"),
+                               rock("../assets/rock/rock.obj"),
+                               planet("../assets/planet/planet.obj")
 {
     std::random_device rd;
     std::mt19937 mt(rd());

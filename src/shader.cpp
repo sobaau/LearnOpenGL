@@ -7,12 +7,17 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <thread>
+#include <future>
 
 Shader::Shader(std::string_view vertexPath, std::string_view fragmentPath) : id(glCreateProgram())
 {
     // 1. retrieve the vertex/fragment source code from filePath
-    auto vShaderString = load_shader(vertexPath);
-    auto fShaderString = load_shader(fragmentPath);
+
+    std::future<std::string> vertexThread = std::async(&load_shader,vertexPath);
+    std::future<std::string> fragmentThread = std::async(&load_shader,fragmentPath);
+    auto vShaderString = vertexThread.get();
+    auto fShaderString = fragmentThread.get();
 
     const GLchar *vShaderCode = vShaderString.c_str();
     const GLchar *fShaderCode = fShaderString.c_str();
@@ -46,9 +51,12 @@ Shader::Shader(std::string_view vertexPath,
     : id(glCreateProgram())
 {
     // 1. retrieve the vertex/fragment source code from filePath
-    auto vShaderString = load_shader(vertexPath);
-    auto fShaderString = load_shader(fragmentPath);
-    auto gShaderString = load_shader(geoPath);
+    std::future<std::string> vertexThread = std::async(&load_shader,vertexPath);
+    std::future<std::string> fragmentThread = std::async(&load_shader,fragmentPath);
+    std::future<std::string> geoThread = std::async(&load_shader,geoPath);
+    auto vShaderString = vertexThread.get();
+    auto fShaderString = fragmentThread.get();
+    auto gShaderString = geoThread.get();
 
     const GLchar *vShaderCode = vShaderString.c_str();
     const GLchar *fShaderCode = fShaderString.c_str();
@@ -186,6 +194,7 @@ void Shader::check_compile_errors(unsigned int shader, std::string_view type, st
 
 std::string Shader::load_shader(std::string_view shaderPath)
 {
+    std::cout << "Loading " << shaderPath << "\n";
     // 1. retrieve the vertex/fragment source code from filePath
     std::ifstream shaderFile;
     // ensure ifstream objects can throw exceptions:
@@ -201,8 +210,8 @@ std::string Shader::load_shader(std::string_view shaderPath)
 
         return shaderStream.str();
     } catch (std::ifstream::failure const &e) {
-        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
-        std::cout << shaderPath << std::endl;
+        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << "\n";
+        std::cout << shaderPath << "\n";
 
         return "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ \n";
     }

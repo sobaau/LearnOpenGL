@@ -20,10 +20,10 @@ CubeDemo::CubeDemo()
                      glm::vec3(1.5f, 2.0f, -2.5f),
                      glm::vec3(1.5f, 0.2f, -1.5f),
                      glm::vec3(-1.3f, 1.0f, -1.5f)}),
-      lightCubeShader("shaders/shader.vert", "shaders/light_cube.frag"),
-      lightingShader("shaders/shader.vert", "shaders/light.frag"),
-      diffuseMap(load_texture("textures/container2.png")),
-      specularMap(load_texture("textures/container2_specular.png"))
+      lightCubeShader("../assets/shaders/shader.vert", "../assets/shaders/light_cube.frag"),
+      lightingShader("../assets/shaders/shader.vert", "../assets/shaders/light.frag"),
+      diffuseMap(load_texture("../assets/textures/container2.png")),
+      specularMap(load_texture("../assets/textures/container2_specular.png"))
 {
     CubeLayout cube;
     glGenVertexArrays(1, &cubeVAO);

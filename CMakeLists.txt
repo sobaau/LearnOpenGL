@@ -30,6 +30,8 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
   endif()
 endif()
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/bin>)
+
 include(cmake/Doxygen.cmake)
 enable_doxygen()
 
@@ -44,7 +46,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/assimp EXCLUDE_FROM_ALL)
 add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/imgui EXCLUDE_FROM_ALL)
 add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/glm EXCLUDE_FROM_ALL)
 add_subdirectory(${CMAKE_SOURCE_DIR}/dependencies/glad EXCLUDE_FROM_ALL)
-
 if(LWYU)
   set(CMAKE_LINK_WHAT_YOU_USE TRUE)
 endif()

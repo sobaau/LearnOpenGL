@@ -17,6 +17,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <thread>
+#include <future>
 
 GlobalSettings globalSettings{
                               1680,
@@ -139,15 +141,22 @@ int main()
     glReadBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    Shader sponzaShader("shaders/shader.vert", "shaders/light.frag");
-    Model sponzaModel("sponza/sponza.obj");
-    Shader screenShader("shaders/screen.vert", "shaders/screen.frag");
-    Shader geoShader("shaders/geo.vert", "shaders/geo.geom", "shaders/geo.frag");
+    std::cout << "Loading Sponza Shaders \n";
+    Shader sponzaShader("../assets/shaders/shader.vert", "../assets/shaders/light.frag");
+    
+    std::cout << "Loading Sponza Model \n";
+    Model sponzaModel("../assets/sponza/sponza.obj");
+
+    std::cout << "Loading Screen Shaders \n";
+    Shader screenShader("../assets/shaders/screen.vert", "../assets/shaders/screen.frag");
+
+    std::cout << "Loading Geo Shaders \n";
+    Shader geoShader("../assets/shaders/geo.vert", "../assets/shaders/geo.geom", "../assets/shaders/geo.frag");
+
     screenShader.use();
     screenShader.set_int("screenTexture", 0);
 
-    DebugUI debugUI(window);
-
+    std::cout << "Loading Grass \n";
     std::vector<glm::vec3> grassLocations;
     grassLocations.reserve(5);
     grassLocations.emplace_back(-1.5f, 0.0f, -0.48f);
@@ -155,11 +164,18 @@ int main()
     grassLocations.emplace_back(0.0f, 0.0f, 0.7f);
     grassLocations.emplace_back(-0.3f, 0.0f, -2.3f);
     grassLocations.emplace_back(0.5f, 0.0f, -0.6f);
-
     Grass grass(grassLocations);
+
+    std::cout << "Loading Demo Cubes \n";
     CubeDemo cubes;
+
+    std::cout << "Loading Skybox \n";
     SkyBox skyBox;
+
+    std::cout << "Loading reflCube \n";
     ReflCube reflCube;
+    
+    std::cout << "Loading Asteroids \n";
     AsteroidDemo as;
 
     WorldLight wLight("World Light",
@@ -195,6 +211,7 @@ int main()
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     bool mKeyPressed = false;
+    DebugUI debugUI(window);
 
     while (!glfwWindowShouldClose(window)) {
         // per-frame time logic

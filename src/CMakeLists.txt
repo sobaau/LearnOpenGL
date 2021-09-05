@@ -50,33 +50,61 @@ endif()
 
 target_link_libraries(OpenGLDemo PRIVATE glfw assimp imgui glm glad)
 
-if(MOVE_ASSETS)
-  add_custom_command(
-    TARGET OpenGLDemo
-    POST_BUILD
-    COMMAND rsync ARGS -r "${CMAKE_SOURCE_DIR}/src/shaders/"
-            "$<TARGET_FILE_DIR:OpenGLDemo>/shaders/")
-  add_custom_command(
-    TARGET OpenGLDemo
-    POST_BUILD
-    COMMAND rsync ARGS -r "${CMAKE_SOURCE_DIR}/src/textures/"
-            "$<TARGET_FILE_DIR:OpenGLDemo>/textures/")
-  add_custom_command(
-    TARGET OpenGLDemo
-    POST_BUILD
-    COMMAND rsync ARGS -r "${CMAKE_SOURCE_DIR}/src/sponza/"
-            "$<TARGET_FILE_DIR:OpenGLDemo>/sponza/")
-  add_custom_command(
-    TARGET OpenGLDemo
-    POST_BUILD
-    COMMAND rsync ARGS -r "${CMAKE_SOURCE_DIR}/src/rock/"
-            "$<TARGET_FILE_DIR:OpenGLDemo>/rock/")
-  add_custom_command(
-    TARGET OpenGLDemo
-    POST_BUILD
-    COMMAND rsync ARGS -r "${CMAKE_SOURCE_DIR}/src/planet/"
-            "$<TARGET_FILE_DIR:OpenGLDemo>/planet/")
-endif()
+# if(MOVE_ASSETS)
+#   if(WIN32)
+#     add_custom_command(
+#       TARGET OpenGLDemo
+#       POST_BUILD
+#       COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/src/shaders/"
+#               "$<TARGET_FILE_DIR:OpenGLDemo>/shaders/")
+#     add_custom_command(
+#       TARGET OpenGLDemo
+#       POST_BUILD
+#       COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/src/textures/"
+#               "$<TARGET_FILE_DIR:OpenGLDemo>/textures/")
+#     add_custom_command(
+#       TARGET OpenGLDemo
+#       POST_BUILD
+#       COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/src/sponza/"
+#               "$<TARGET_FILE_DIR:OpenGLDemo>/sponza/")
+#     add_custom_command(
+#       TARGET OpenGLDemo
+#       POST_BUILD
+#       COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/src/rock/"
+#               "$<TARGET_FILE_DIR:OpenGLDemo>/rock/")
+#     add_custom_command(
+#       TARGET OpenGLDemo
+#       POST_BUILD
+#       COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/src/planet/"
+#               "$<TARGET_FILE_DIR:OpenGLDemo>/planet/")
+#   else()
+#     add_custom_command(
+#       TARGET OpenGLDemo
+#       POST_BUILD
+#       COMMAND rsync ARGS -r "${CMAKE_SOURCE_DIR}/src/shaders/"
+#               "$<TARGET_FILE_DIR:OpenGLDemo>/shaders/")
+#     add_custom_command(
+#       TARGET OpenGLDemo
+#       POST_BUILD
+#       COMMAND rsync ARGS -r "${CMAKE_SOURCE_DIR}/src/textures/"
+#               "$<TARGET_FILE_DIR:OpenGLDemo>/textures/")
+#     add_custom_command(
+#       TARGET OpenGLDemo
+#       POST_BUILD
+#       COMMAND rsync ARGS -r "${CMAKE_SOURCE_DIR}/src/sponza/"
+#               "$<TARGET_FILE_DIR:OpenGLDemo>/sponza/")
+#     add_custom_command(
+#       TARGET OpenGLDemo
+#       POST_BUILD
+#       COMMAND rsync ARGS -r "${CMAKE_SOURCE_DIR}/src/rock/"
+#               "$<TARGET_FILE_DIR:OpenGLDemo>/rock/")
+#     add_custom_command(
+#       TARGET OpenGLDemo
+#       POST_BUILD
+#       COMMAND rsync ARGS -r "${CMAKE_SOURCE_DIR}/src/planet/"
+#               "$<TARGET_FILE_DIR:OpenGLDemo>/planet/")
+#   endif()
+# endif()
 
 if(USE_PCH)
   target_precompile_headers(OpenGLDemo PRIVATE ${HEADER_FILES})

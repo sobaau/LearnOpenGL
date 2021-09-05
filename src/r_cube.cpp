@@ -44,7 +44,7 @@ ReflCube::ReflCube()
                 0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
                 -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
                 -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f}),
-      reflShader("shaders/reflection.vert", "shaders/reflection.frag")
+      reflShader("../assets/shaders/reflection.vert", "../assets/shaders/reflection.frag")
 {
     glGenVertexArrays(1, &RVAO);
     glGenBuffers(1, &RVBO);

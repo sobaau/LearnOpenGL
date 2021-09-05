@@ -15,10 +15,10 @@ Grass::Grass(std::vector<glm::vec3> loc)
                            0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
                            1.0f, -0.5f, 0.0f, 1.0f, 1.0f,
                            1.0f, 0.5f, 0.0f, 1.0f, 0.0f}),
-      grassTexture(load_texture("textures/grass.png")),
+      grassTexture(load_texture("../assets/textures/grass.png")),
       grassVAO(0),
       grassVBO(0),
-      grassShader("shaders/grass.vert", "shaders/grass.frag"),
+      grassShader("../assets/shaders/grass.vert", "../assets/shaders/grass.frag"),
       locations(std::move(loc))
 {
     glGenVertexArrays(1, &grassVAO);

@@ -5,12 +5,12 @@
 
 SkyBox::SkyBox()
     : faces(
-          {"textures/skybox/right.jpg",
-           "textures/skybox/left.jpg",
-           "textures/skybox/top.jpg",
-           "textures/skybox/bottom.jpg",
-           "textures/skybox/front.jpg",
-           "textures/skybox/back.jpg"}),
+          {"../assets/textures/skybox/right.jpg",
+           "../assets/textures/skybox/left.jpg",
+           "../assets/textures/skybox/top.jpg",
+           "../assets/textures/skybox/bottom.jpg",
+           "../assets/textures/skybox/front.jpg",
+           "../assets/textures/skybox/back.jpg"}),
       skyboxVertices({// positions
                       -1.0f, 1.0f, -1.0f,
                       -1.0f, -1.0f, -1.0f,
@@ -53,7 +53,7 @@ SkyBox::SkyBox()
                       1.0f, -1.0f, -1.0f,
                       -1.0f, -1.0f, 1.0f,
                       1.0f, -1.0f, 1.0f}),
-      skyBoxShader("shaders/sky_box.vert", "shaders/sky_box.frag"),
+      skyBoxShader("../assets/shaders/sky_box.vert", "../assets/shaders/sky_box.frag"),
       skyTexture(load_cubemap(faces))
 {
     glGenVertexArrays(1, &skyboxVAO);
