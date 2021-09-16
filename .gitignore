@@ -67,5 +67,5 @@ lib/
 **/Testing/
 dependencies/assimp/revision.h
 **/cmake-build-*/
-!/src/**/*.obj
+!/assets/**/*.obj
 CMakeLists.txt.user
