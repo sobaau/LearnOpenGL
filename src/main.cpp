@@ -10,26 +10,26 @@
 #include "r_cube.h"
 #include "shader.h"
 #include "sky_box.h"
+#include <future>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
-#include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/vec3.hpp>
 #include <iostream>
 #include <string>
-#include <vector>
 #include <thread>
-#include <future>
+#include <vector>
 
 GlobalSettings globalSettings{
-                              1680,
-                              1050,
-                              (1280.0 / 2.0),
-                              (720.0 / 2.0),
-                              true,
-                              0.0f,
-                              0.0f,
-                              true,
-                              false};
+    1680,
+    1050,
+    (1280.0 / 2.0),
+    (720.0 / 2.0),
+    true,
+    0.0f,
+    0.0f,
+    true,
+    false};
 static Camera camera(glm::vec3(0.0f, 0.0f, 0.0f)); //NOLINT
 int main()
 {
@@ -143,7 +143,7 @@ int main()
 
     std::cout << "Loading Sponza Shaders \n";
     Shader sponzaShader("../assets/shaders/shader.vert", "../assets/shaders/light.frag");
-    
+
     std::cout << "Loading Sponza Model \n";
     Model sponzaModel("../assets/sponza/sponza.obj");
 
@@ -174,13 +174,13 @@ int main()
 
     std::cout << "Loading reflCube \n";
     ReflCube reflCube;
-    
+
     std::cout << "Loading Asteroids \n";
     AsteroidDemo as;
 
     WorldLight wLight("World Light",
                       {-0.2f, -1.0f, -0.3f}, {0.05f, 0.05f, 0.05f},
-                      {0.4f, 0.4f, 0.4f}, {0.5f, 0.5f, 0.5f});
+                      {0.4f, 0.4f, 0.4f}, {0.5f, 0.5f, 0.5f},{0.0f,0.0f,0.0f});
 
     std::vector<PointLight> pointLights;
     pointLights.reserve(4);

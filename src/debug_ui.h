@@ -1,4 +1,5 @@
 #pragma once
+#include "entities/point_light.h"
 #include <glm/vec3.hpp>
 #include <vector>
 #include <imgui.h>
@@ -6,8 +7,8 @@
 #include <GLFW/glfw3.h>
 
 struct WorldLight;
-struct PointLight;
 struct Camera;
+
 class DebugUI
 {    
 public:
@@ -26,6 +27,7 @@ private:
     void world_light(WorldLight &worldLight);
     void docking_space();
     void edit_light(PointLight &light);
-    void light_list(std::vector<PointLight> &pointLights, Camera &camera);
+    template<typename T>
+    void light_list(std::vector<T> &entities, Camera &camera);
     void render_viewport(GLFWwindow *window, unsigned int fb);
 };

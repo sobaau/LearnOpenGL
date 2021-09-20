@@ -16,7 +16,7 @@ public:
     void clean_up();
     void draw(Camera const &camera, const glm::mat4 &projection, const glm::mat4 &view, const std::vector<PointLight> &pointLights, const WorldLight &worldLight);
     [[nodiscard]] Shader get_shader() const;
-
+    [[nodiscard]] std::vector<glm::vec3> get_positions() const;
 private:
     unsigned int VBO{0};
     unsigned int cubeVAO{0};

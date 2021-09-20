@@ -6,7 +6,6 @@
 struct SpotLight : public Light
 {
     glm::vec3 direction;
-    glm::vec3 position;
     glm::vec3 constant;
     glm::vec3 linear;
     glm::vec3 quadratic;

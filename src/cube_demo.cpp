@@ -107,6 +107,10 @@ Shader CubeDemo::get_shader() const
     return lightingShader;
 }
 
+std::vector<glm::vec3> CubeDemo::get_positions() const {
+    return cubePositions;
+}
+
 void CubeDemo::clean_up()
 {
     // optional: de-allocate all resources once they've outlived their purpose:

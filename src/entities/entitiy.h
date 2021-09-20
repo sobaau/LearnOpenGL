@@ -2,12 +2,14 @@
 #define ENTITIY_H_
 
 #include <glm/glm.hpp>
+#include <string>
 
-class Entity
+struct Entity
 {
-    glm::vec3 position;
 public:
-    virtual void draw() = 0;
-    [[nodiscard]] glm::vec3 getPosition() const;
+    Entity() = delete;
+    Entity(glm::vec3 &position, std::string &name);
+    glm::vec3 position;
+    std::string name;
 };
 #endif // ENTITIY_H_

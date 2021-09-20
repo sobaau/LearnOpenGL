@@ -2,6 +2,7 @@
 #include "camera.h"
 #include "entities/point_light.h"
 #include "entities/world_light.h"
+#include "entities/entitiy.h"
 #include "imgui.h"
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -10,6 +11,7 @@
 #include <imgui_impl_opengl3.h>
 #include <iostream>
 #include <vector>
+#include <type_traits>
 
 DebugUI::DebugUI(GLFWwindow *window) : show_demo_window(true), show_another_window(false), clear_color(ImVec4(0.45f, 0.55f, 0.60f, 1.00f))
 {
@@ -90,18 +92,18 @@ void DebugUI::render_viewport(GLFWwindow *window, unsigned int fb)
     }
     ImGui::End();
 }
-
-void DebugUI::light_list(std::vector<PointLight> &pointLights, Camera &camera)
+template<typename T>
+void DebugUI::light_list(std::vector<T> &entities, Camera &camera)
 {
     ImGui::Begin("Point Lights");
     if (ImGui::TreeNode("Point Lights")) {
-        for (int i = 0; i < pointLights.size(); i++) {
+        for (int i = 0; i < entities.size(); i++) {
             // Use SetNextItemOpen() so set the default state of a node to be open. We could
             // also use TreeNodeEx() with the ImGuiTreeNodeFlags_DefaultOpen flag to achieve the same thing!
             if (i == 0) {
                 ImGui::SetNextItemOpen(true, ImGuiCond_Once);
             }
-            if (ImGui::TreeNode((void *)(intptr_t)i, "%s", pointLights[i].name.c_str())) {
+            if (ImGui::TreeNode((void *)(intptr_t)i, "%s", entities[i].name.c_str())) {
                 if (ImGui::SmallButton("Edit")) {
                     light = i;
                     open = true;
@@ -109,21 +111,22 @@ void DebugUI::light_list(std::vector<PointLight> &pointLights, Camera &camera)
                 ImGui::SameLine();
                 if (ImGui::SmallButton("Delete")) {
                     open = false;
-                    pointLights.erase(pointLights.begin() + i);
+                    entities.erase(entities.begin() + i);
                 }
                 ImGui::SameLine();
                 if (ImGui::SmallButton("Move to Camera")) {
-                    pointLights[i].position = camera.Position;
+                    //std::is_base_of<Entity, >
+                    entities[i].position = camera.Position;
                 }
-                ImGui::Text("Size is %i", static_cast<int>(pointLights.size()));
+                ImGui::Text("Size is %i", static_cast<int>(entities.size()));
                 ImGui::TreePop();
             }
         }
         ImGui::TreePop();
     }
     if (open) {
-        if (light < pointLights.size()) {
-            edit_light(pointLights[light]);
+        if (light < entities.size()) {
+            //edit_light(entities[light]);
         }
     }
     ImGui::End();

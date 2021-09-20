@@ -1,6 +1,6 @@
 #include "entitiy.h"
+#include <glm/glm.hpp>
+#include <string>
 
-glm::vec3 Entity::getPosition() const
-{
-    return position;
-}
+Entity::Entity(glm::vec3 &position, std::string &name) : position(position), name(name){ }
+
