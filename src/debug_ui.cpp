@@ -45,7 +45,8 @@ void DebugUI::draw(GLFWwindow *window, std::vector<PointLight> &pointLights, Wor
     if (show_demo_window) {
         ImGui::ShowDemoWindow(&show_demo_window);
     }
-    light_list(pointLights, camera);
+    //std::cout << std::is_base_of<Entity, PointLight>::value;
+    entity_list(pointLights, camera);
     render_viewport(window, fb);
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -93,19 +94,17 @@ void DebugUI::render_viewport(GLFWwindow *window, unsigned int fb)
     ImGui::End();
 }
 template<typename T>
-void DebugUI::light_list(std::vector<T> &entities, Camera &camera)
+void DebugUI::entity_list(std::vector<T> &entities, Camera &camera)
 {
     ImGui::Begin("Point Lights");
     if (ImGui::TreeNode("Point Lights")) {
         for (int i = 0; i < entities.size(); i++) {
-            // Use SetNextItemOpen() so set the default state of a node to be open. We could
-            // also use TreeNodeEx() with the ImGuiTreeNodeFlags_DefaultOpen flag to achieve the same thing!
             if (i == 0) {
                 ImGui::SetNextItemOpen(true, ImGuiCond_Once);
             }
             if (ImGui::TreeNode((void *)(intptr_t)i, "%s", entities[i].name.c_str())) {
                 if (ImGui::SmallButton("Edit")) {
-                    light = i;
+                    entity = i;
                     open = true;
                 }
                 ImGui::SameLine();
@@ -115,7 +114,6 @@ void DebugUI::light_list(std::vector<T> &entities, Camera &camera)
                 }
                 ImGui::SameLine();
                 if (ImGui::SmallButton("Move to Camera")) {
-                    //std::is_base_of<Entity, >
                     entities[i].position = camera.Position;
                 }
                 ImGui::Text("Size is %i", static_cast<int>(entities.size()));
@@ -123,11 +121,6 @@ void DebugUI::light_list(std::vector<T> &entities, Camera &camera)
             }
         }
         ImGui::TreePop();
-    }
-    if (open) {
-        if (light < entities.size()) {
-            //edit_light(entities[light]);
-        }
     }
     ImGui::End();
 }

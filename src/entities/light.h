@@ -1,13 +1,9 @@
 #ifndef LIGHT_H_
 #define LIGHT_H_
-#include "entitiy.h"
 #include <glm/glm.hpp>
-#include <string>
 struct Light {
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
-    Light() = delete;
-    Light(glm::vec3 &ambient, glm::vec3 &diffuse, glm::vec3 &specular);
+    virtual glm::vec3 get_ambient() = 0;
+    virtual glm::vec3 get_diffuse() = 0;
+    virtual glm::vec3 get_specular() = 0;
 };
 #endif // LIGHT_H_

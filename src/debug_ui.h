@@ -20,7 +20,7 @@ private:
     bool show_demo_window;
     bool show_another_window;
     bool open = false;
-    int light{0};
+    int entity{0};
 
     ImVec4 clear_color;
     static void menu_bar(GLFWwindow *window);
@@ -28,6 +28,6 @@ private:
     void docking_space();
     void edit_light(PointLight &light);
     template<typename T>
-    void light_list(std::vector<T> &entities, Camera &camera);
+    void entity_list(std::vector<T> &entities, Camera &camera);
     void render_viewport(GLFWwindow *window, unsigned int fb);
 };

@@ -1,4 +1,3 @@
-
 #include "asteroid.h"
 #include "camera.h"
 #include "model.h"
@@ -75,7 +74,6 @@ AsteroidDemo::AsteroidDemo() : asteroidShader("../assets/shaders/asteroid.vert",
 
 void AsteroidDemo::draw(glm::mat4 &projection, glm::mat4 &view)
 {
-
     planetShader.use();
     planetShader.set_mat4("projection", projection);
     planetShader.set_mat4("view", view);
