@@ -20,7 +20,7 @@
 #include <thread>
 #include <vector>
 
-GlobalSettings globalSettings{
+GlobalSettings globalSettings {
     1680,
     1050,
     (1280.0 / 2.0),
@@ -29,8 +29,11 @@ GlobalSettings globalSettings{
     0.0f,
     0.0f,
     true,
-    false};
+    false
+};
+
 static Camera camera(glm::vec3(0.0f, 0.0f, 0.0f)); //NOLINT
+
 int main()
 {
     // glfw: initialize and configure
@@ -100,6 +103,7 @@ int main()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(&points[0]), reinterpret_cast<void *>(2 * sizeof(&points[0])));
     glBindVertexArray(0);
 
+    //Frame buffer to render to texture for imgui
     unsigned int FBO{0};
     glGenFramebuffers(1, &FBO);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
@@ -121,7 +125,8 @@ int main()
         std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+    
+    // Depthbuffer
     unsigned int depthMapFBO{0};
     glGenFramebuffers(1, &depthMapFBO);
     const unsigned int SHADOW_WIDTH = 1024;
@@ -143,7 +148,6 @@ int main()
 
     std::cout << "Loading Sponza Shaders \n";
     Shader sponzaShader("../assets/shaders/shader.vert", "../assets/shaders/light.frag");
-
     std::cout << "Loading Sponza Model \n";
     Model sponzaModel("../assets/sponza/sponza.obj");
 
@@ -152,6 +156,8 @@ int main()
 
     std::cout << "Loading Geo Shaders \n";
     Shader geoShader("../assets/shaders/geo.vert", "../assets/shaders/geo.geom", "../assets/shaders/geo.frag");
+
+    Shader simpleDepthShader("../assets/shaders/simple_depth_shader.vert", "../assets/shaders/simple_depth_shader.frag");
 
     screenShader.use();
     screenShader.set_int("screenTexture", 0);
@@ -227,11 +233,13 @@ int main()
         // clear all relevant buffers
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
         // 1. first render to depth map
         glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
         render_scene(sponzaShader, sponzaModel, cubes, reflCube, as, grass, wLight, pointLights, skyBox);
+        
         // 2. then render scene as normal with shadow mapping (using depth map)
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         glViewport(0, 0, globalSettings.SCR_WIDTH, globalSettings.SCR_HEIGHT);
@@ -253,16 +261,21 @@ int main()
     glfwTerminate();
     return 0;
 }
-void render_scene(Shader &sponzaShader, Model &sponzaModel, CubeDemo &cubes, ReflCube &reflCube, AsteroidDemo &as, Grass &grass, WorldLight &wLight, std::vector<PointLight> &pointLights, SkyBox &skyBox)
+
+void render_scene(Shader &sponzaShader, Model &sponzaModel, CubeDemo &cubes, ReflCube &reflCube, AsteroidDemo &as, 
+                  Grass &grass, WorldLight &wLight, std::vector<PointLight> &pointLights, SkyBox &skyBox)
 {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(globalSettings.SCR_WIDTH) / static_cast<float>(globalSettings.SCR_HEIGHT), 0.1f, 100.0f);
     auto view = camera.get_view_matrix();
     render_lights(as.planetShader, pointLights, wLight);
     render_lights(as.asteroidShader, pointLights, wLight);
     as.draw(projection, view);
+
     render_lights(cubes.get_shader(), pointLights, wLight);
     cubes.draw(camera, projection, view, pointLights, wLight);
+    
     render_lights(sponzaShader, pointLights, wLight);
     // view/projection transformations
     sponzaShader.set_mat4("projection", projection);
@@ -273,13 +286,16 @@ void render_scene(Shader &sponzaShader, Model &sponzaModel, CubeDemo &cubes, Ref
     model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
     sponzaShader.set_mat4("model", model);
     sponzaModel.draw(sponzaShader);
+    
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.get_texture());
     reflCube.draw(view, projection, camera);
+    
     view = glm::mat4(glm::mat3(camera.get_view_matrix()));
     skyBox.draw(view, projection);
-    view = camera.get_view_matrix();
+    
     //renderLights(grass.grassShader, pointLights, wLight);
+    view = camera.get_view_matrix();
     grass.draw(projection, view, camera.Position);
 }
 
